@@ -4,7 +4,7 @@ import xml.etree.cElementTree as etree
 import logging
 
 schema = {
-  'Posts': {
+  'smallPosts': {
     'Id': 'INTEGER',
     'PostTypeId': 'INTEGER',  # 1: Question, 2: Answer
     'ParentID': 'INTEGER',  # (only present if PostTypeId is 2)
@@ -31,7 +31,7 @@ schema = {
 
 
 def dump_files(file_names, anathomy,
-  dump_path='/home/ns3184/searchoverflow/dataparser',
+  dump_path='/home/mk5376/WSE/SearchOverflow/dataparser',
   dump_database_name='so-dump.db',
   create_query='CREATE TABLE IF NOT EXISTS {table} ({fields})',
   insert_query='INSERT INTO {table} ({columns}) VALUES ({values})', log_filename='so-parser.log'):
@@ -77,4 +77,4 @@ def dump_files(file_names, anathomy,
       del (tree)
 
 if __name__ == '__main__':
-    dump_files(["Posts"], schema)
+    dump_files(["smallPosts"], schema)
