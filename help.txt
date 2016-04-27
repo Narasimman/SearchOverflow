@@ -1,0 +1,2 @@
+To run the Files: javac -cp ".:lucene/*" <PackageName>/<Java File Name> 
+-- From the src folder.
