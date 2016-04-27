@@ -31,7 +31,7 @@ schema = {
 
 
 def dump_files(file_names, anathomy,
-  dump_path='/home/ns3184/searchoverflow',
+  dump_path='/home/ns3184/searchoverflow/dataparser',
   dump_database_name='so-dump.db',
   create_query='CREATE TABLE IF NOT EXISTS {table} ({fields})',
   insert_query='INSERT INTO {table} ({columns}) VALUES ({values})', log_filename='so-parser.log'):
@@ -40,6 +40,7 @@ def dump_files(file_names, anathomy,
   
   for file in file_names:
     print "Opening {0}.xml".format(file)
+    counter = 0
     with open(os.path.join(dump_path, file + '.xml')) as xml_file:
       tree = etree.iterparse(xml_file)
       table_name = file
@@ -54,23 +55,24 @@ def dump_files(file_names, anathomy,
         db.execute(sql_create)
       except Exception, e:
         logging.warning(e)
-	    
       for events, row in tree:
         try:
           if row.attrib.values():
-            #print(row.attrib.keys())
+            if counter%10 == 0:
+              print "Done " + str(counter)
             query = insert_query.format(
               table=table_name,
               columns=', '.join(row.attrib.keys()),
               values=('?, ' * len(row.attrib.keys()))[:-2])
             db.execute(query, row.attrib.values())
             print ".",
+            counter = counter + 1
         except Exception, e:
           logging.warning(e)
           print "x",
         finally:
           row.clear()
-      print "\n"
+      print "Successfully inserted. \n"
       db.commit()
       del (tree)
 
