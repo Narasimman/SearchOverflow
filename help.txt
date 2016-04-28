@@ -1,2 +1,6 @@
 To run the Files: javac -cp ".:lucene/*" <PackageName>/<Java File Name> 
 -- From the src folder.
+
+To compile dbConn: javac dbConn.java
+To run it: java -cp ".:/home/mk5376/WSE/SearchOverflow/src/jarFiles/sqlite-jdbc-3.7.2.jar" dbConn
+Added the JDBC driver to the jarFiles folder

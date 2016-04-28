@@ -32,7 +32,7 @@ schema = {
 
 def dump_files(file_names, anathomy,
   dump_path='/home/mk5376/WSE/SearchOverflow/dataparser',
-  dump_database_name='so-dump.db',
+  dump_database_name='so_dump.db',
   create_query='CREATE TABLE IF NOT EXISTS {table} ({fields})',
   insert_query='INSERT INTO {table} ({columns}) VALUES ({values})', log_filename='so-parser.log'):
   logging.basicConfig(filename=os.path.join(dump_path, log_filename), level=logging.INFO)
