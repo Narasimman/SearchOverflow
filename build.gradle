@@ -59,7 +59,7 @@ task retrieverjar(type: Jar) {
         'Main-Class': 'indexer.Retriever'
     }
 
-    baseName = "indexer"
+    baseName = "retriver"
     mainClassName = 'indexer.Retriever'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     from fileTree(buildDir).matching{ include 'META-INF/services/*' }
