@@ -50,3 +50,12 @@ uploadArchives {
        }
     }
 }
+
+mainClassName = 'indexer.Driver'
+task searchOverFlow(type: Jar) {
+    baseName = "Driver"
+    
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+
+}
