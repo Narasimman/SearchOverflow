@@ -39,7 +39,7 @@ public class Retriever {
     String queryStr = "";
     
     for(String s : q) {
-      queryStr += s + " "; 
+      queryStr += s; 
     }
     
     Query query = parser.parse(queryStr);
@@ -51,7 +51,7 @@ public class Retriever {
     long end = System.currentTimeMillis();
     
     System.out.println("Found " + hits.totalHits + " document(s) (in "
-        + (end - start) + " milliseconds) that matched query '" + q + "':");
+        + (end - start) + " milliseconds) that matched query '" + queryStr + "':");
 
     Map<String, String> result = new HashMap<String, String>();
 
