@@ -11,6 +11,21 @@ jar {
     }
 }
 
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+    }
+}
+
+task driverjar(type: Jar) {
+    baseName = "indexer"
+    mainClassName = 'indexer.Driver'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
 repositories {
     mavenCentral()
 }
@@ -26,6 +41,7 @@ dependencies {
 test {
     systemProperties 'property': 'value'
 }
+
 
 uploadArchives {
     repositories {
