@@ -37,11 +37,11 @@ public class SearchServlet extends HttpServlet {
       // int numIndexed = indexer.index(dataDir);
       // indexer.close();
 
-      Map<String, String> result = Retriever.search(indexDir,
-          request.getParameter("q"));
+      //Map<String, String> result = Retriever.search(indexDir,
+        //  request.getParameter("q"));
       response.setContentType("text/html;charset=UTF-8");
 
-      request.setAttribute("res", result);
+      //request.setAttribute("res", result);
       request.setAttribute("dataDir", dataDir);
       request.getRequestDispatcher("/result.jsp").forward(request, response);
     } catch (Exception e) {
