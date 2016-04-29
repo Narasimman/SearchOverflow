@@ -26,8 +26,9 @@ public class Driver {
    * @param dbPath
    * @throws SQLException
    * @throws IOException
+   * @throws ClassNotFoundException 
    */
-  public Driver(String indexPath, String dbPath) throws SQLException, IOException {
+  public Driver(String indexPath, String dbPath) throws SQLException, IOException, ClassNotFoundException {
     if(indexPath == null || dbPath == null) {
       throw new IllegalArgumentException(ERR_INVALID_PATH);
     }
