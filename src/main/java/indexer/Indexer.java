@@ -8,7 +8,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntField;
-import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
@@ -89,11 +89,11 @@ public class Indexer {
     doc.add(new IntField(PostField.ID.toString(), post.getId(), Field.Store.YES));
     
     if(post.getTitle() != null) {
-      doc.add(new StringField(PostField.TITLE.toString(), post.getTitle(), Field.Store.YES));
+      doc.add(new TextField(PostField.TITLE.toString(), post.getTitle(), Field.Store.YES));
     }
     
     if(post.getBody() != null) {
-      doc.add(new StringField(PostField.BODY.toString(), post.getBody(), Field.Store.YES));
+      doc.add(new TextField(PostField.BODY.toString(), post.getBody(), Field.Store.YES));
     }
     
     if(post.getAcceptedAnswerId() != 0) {

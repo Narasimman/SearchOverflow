@@ -39,7 +39,7 @@ public class Retriever {
     String queryStr = "";
     
     for(String s : q) {
-      queryStr += s; 
+      queryStr += s + " "; 
     }
     
     Query query = parser.parse(queryStr);
