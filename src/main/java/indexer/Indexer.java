@@ -97,7 +97,7 @@ public class Indexer {
     }
     
     if(post.getAcceptedAnswerId() != 0) {
-      doc.add(new IntField(PostField.ANSWERID.toString(), post.getAcceptedAnswerId(),
+      doc.add(new IntField(PostField.ACCEPTEDANSWERID.toString(), post.getAcceptedAnswerId(),
           Field.Store.YES));
     }
     return doc;

@@ -60,7 +60,7 @@ public class Retriever {
       
       Document doc = is.doc(scoreDoc.doc);
       
-      String answerId = doc.get(PostField.ANSWERID.toString());
+      String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());
       result.put(doc.get(PostField.ID.toString()), answerId);
 
     }
