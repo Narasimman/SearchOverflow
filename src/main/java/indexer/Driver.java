@@ -12,8 +12,9 @@ import org.apache.commons.cli.ParseException;
 
 /**
  * Driver class
+ * 
  * @author Narasimman
- *
+ * 
  */
 public class Driver {
   private final Indexer indexer;
@@ -22,14 +23,16 @@ public class Driver {
 
   /**
    * Driver that creates an indexer instance and a db connection
+   * 
    * @param indexPath
    * @param dbPath
    * @throws SQLException
    * @throws IOException
-   * @throws ClassNotFoundException 
+   * @throws ClassNotFoundException
    */
-  public Driver(String indexPath, String dbPath) throws SQLException, IOException, ClassNotFoundException {
-    if(indexPath == null || dbPath == null) {
+  public Driver(String indexPath, String dbPath) throws SQLException,
+      IOException, ClassNotFoundException {
+    if (indexPath == null || dbPath == null) {
       throw new IllegalArgumentException(ERR_INVALID_PATH);
     }
 
@@ -39,12 +42,13 @@ public class Driver {
 
   /**
    * Build the index for a given resultset
+   * 
    * @throws SQLException
    * @throws IOException
    */
   void buildIndex(ResultSet rs) throws SQLException, IOException {
     int counter = 0;
-    while(rs.next()) {
+    while (rs.next()) {
       int id = rs.getInt("id");
       String title = rs.getString("title");
       String body = rs.getString("body");
@@ -53,13 +57,13 @@ public class Driver {
       Post post = new Post(id, title, body, answerId);
       indexer.index(post);
 
-      ///////TODO:
-      
+      // /////TODO:
+
       ++counter;
-      if(counter % 100 == 0) {
+      if (counter % 100 == 0) {
         System.out.println("Indexed " + counter + " documents!");
       }
-      /////
+      // ///
     }
 
     connection.close();
@@ -77,7 +81,7 @@ public class Driver {
         + "This indexes the entries in the sqlite db, creating a Lucene index"
         + "in INDEX_PATH that can be searched with SearchFiles";
 
-    if(args.length < 2) {
+    if (args.length < 2) {
       System.out.println(usage);
       System.exit(-1);
     }

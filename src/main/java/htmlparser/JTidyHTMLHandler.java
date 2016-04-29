@@ -1,5 +1,11 @@
 package htmlparser;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.w3c.dom.Document;
@@ -8,14 +14,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.w3c.tidy.Tidy;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
 
 public class JTidyHTMLHandler {
 

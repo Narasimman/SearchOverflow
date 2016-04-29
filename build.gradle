@@ -5,12 +5,6 @@ apply plugin: 'application'
 
 sourceCompatibility = 1.5
 version = '1.0'
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'Search Overflow', 'Implementation-Version': version,
-        'Main-Class': 'indexer.Driver'
-    }
-}
 
 sourceSets {
     main {

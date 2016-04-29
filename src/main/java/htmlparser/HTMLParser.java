@@ -8,15 +8,15 @@ import org.w3c.dom.NodeList;
 
 public class HTMLParser {
   private static final JTidyHTMLHandler handler = new JTidyHTMLHandler();
-  
+
   public static Element parse(Reader page) throws FileNotFoundException {
     return handler.getRawDocument(page);
   }
-  
+
   public static String getText(Element doc) {
     return handler.getText(doc);
   }
-  
+
   public static NodeList getAnchors(Element doc) {
     return handler.getAnchors(doc);
   }

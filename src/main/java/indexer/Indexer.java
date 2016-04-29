@@ -16,6 +16,7 @@ import org.apache.lucene.store.FSDirectory;
 
 /**
  * Indexer class that is build on Lucene
+ * 
  * @author Narasimman
  */
 public class Indexer {
@@ -24,11 +25,12 @@ public class Indexer {
 
   /**
    * Expects a path where the indexed files will be stored
+   * 
    * @param indexPath
    * @throws IOException
    */
   public Indexer(String indexPath) throws IOException {
-    if(indexPath == null) {
+    if (indexPath == null) {
       throw new IllegalArgumentException(ERR_INVALID_PATH);
     }
 
@@ -39,6 +41,7 @@ public class Indexer {
 
   /**
    * call this to close the indexer instance
+   * 
    * @throws IOException
    */
   public void close() throws IOException {
@@ -48,8 +51,9 @@ public class Indexer {
   /**
    * It takes a Post object and adds the index to document
    * 
-   * @param Post post
-   * @return 
+   * @param Post
+   *          post
+   * @return
    * @throws IOException
    */
   public boolean index(Post post) throws IOException {
@@ -62,6 +66,7 @@ public class Indexer {
 
   /**
    * Number of documents Indexed
+   * 
    * @return num
    */
   public int getNumberOfIndexedDocuments() {
@@ -69,16 +74,14 @@ public class Indexer {
   }
 
   /**
-   * Adds the following properties of a post into a lucene document
-   * id
-   * title
-   * body
-   * acceptedAnswerId
+   * Adds the following properties of a post into a lucene document id title
+   * body acceptedAnswerId
+   * 
    * @param post
    * @return Lucene Document
    */
   private Document getDocument(Post post) {
-    if(post == null) {
+    if (post == null) {
       return null;
     }
 
@@ -86,7 +89,8 @@ public class Indexer {
     doc.add(new IntField("id", post.getId(), Field.Store.YES));
     doc.add(new StringField("title", post.getTitle(), Field.Store.YES));
     doc.add(new StringField("body", post.getBody(), Field.Store.YES));
-    doc.add(new IntField("answerId", post.getAcceptedAnswerId(), Field.Store.YES));
+    doc.add(new IntField("answerId", post.getAcceptedAnswerId(),
+        Field.Store.YES));
     return doc;
-  }  
+  }
 }
