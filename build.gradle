@@ -21,6 +21,19 @@ sourceSets {
 }
 
 task driverjar(type: Jar) {
+    doFirst {
+        def serviceDir = file("$buildDir/META-INF/services")
+        serviceDir.deleteDir()
+        serviceDir.mkdirs()
+
+        // copy all service files from deps to buildDir
+        for(file in configurations.runtime) {
+            zipTree(file).matching{ include 'META-INF/services/*' }.each { f ->
+                new File(serviceDir, f.name) << f.getText("UTF-8")
+            }
+        }
+    }
+
     manifest {
         attributes 'Implementation-Title': 'Search Overflow', 'Implementation-Version': version,
         'Main-Class': 'indexer.Driver'
@@ -29,6 +42,7 @@ task driverjar(type: Jar) {
     baseName = "indexer"
     mainClassName = 'indexer.Driver'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from fileTree(buildDir).matching{ include 'META-INF/services/*' }
     with jar
 }
 
