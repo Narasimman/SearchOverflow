@@ -21,6 +21,11 @@ sourceSets {
 }
 
 task driverjar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Search Overflow', 'Implementation-Version': version,
+        'Main-Class': 'indexer.Driver'
+    }
+
     baseName = "indexer"
     mainClassName = 'indexer.Driver'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
