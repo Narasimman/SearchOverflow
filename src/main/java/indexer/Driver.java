@@ -10,6 +10,8 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import db.Database;
+
 /**
  * Driver class
  * @author Narasimman
