@@ -6,14 +6,6 @@ apply plugin: 'application'
 sourceCompatibility = 1.5
 version = '1.0'
 
-sourceSets {
-    main {
-        java {
-            srcDir 'src'
-        }
-    }
-}
-
 task indexerjar(type: Jar) {
     doFirst {
         def serviceDir = file("$buildDir/META-INF/services")
