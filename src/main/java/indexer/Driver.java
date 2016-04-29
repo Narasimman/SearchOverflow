@@ -76,7 +76,7 @@ public class Driver {
         + "This indexes the entries in the sqlite db, creating a Lucene index"
         + "in INDEX_PATH that can be searched with SearchFiles";
 
-    if(args.length < 3) {
+    if(args.length < 2) {
       System.out.println(usage);
       System.exit(-1);
     }
