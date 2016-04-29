@@ -1,5 +1,7 @@
 *.xml
 *.db
 *.log
-
+.gradle
+.settings
 *.class
+.classpath
