@@ -87,10 +87,19 @@ public class Indexer {
 
     Document doc = new Document();
     doc.add(new IntField("id", post.getId(), Field.Store.YES));
-    doc.add(new StringField("title", post.getTitle(), Field.Store.YES));
-    doc.add(new StringField("body", post.getBody(), Field.Store.YES));
-    doc.add(new IntField("answerId", post.getAcceptedAnswerId(),
-        Field.Store.YES));
+    
+    if(post.getTitle() != null) {
+      doc.add(new StringField("title", post.getTitle(), Field.Store.YES));
+    }
+    
+    if(post.getBody() != null) {
+      doc.add(new StringField("body", post.getBody(), Field.Store.YES));
+    }
+    
+    if(post.getAcceptedAnswerId() != 0) {
+      doc.add(new IntField("answerId", post.getAcceptedAnswerId(),
+          Field.Store.YES));
+    }
     return doc;
   }
 }
