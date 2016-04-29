@@ -12,7 +12,6 @@ import org.apache.commons.cli.ParseException;
 
 /**
  * Driver class
- * 
  * @author Narasimman
  * 
  */
@@ -31,7 +30,7 @@ public class Driver {
    * @throws ClassNotFoundException
    */
   public Driver(String indexPath, String dbPath) throws SQLException,
-      IOException, ClassNotFoundException {
+  IOException, ClassNotFoundException {
     if (indexPath == null || dbPath == null) {
       throw new IllegalArgumentException(ERR_INVALID_PATH);
     }
@@ -49,10 +48,10 @@ public class Driver {
   void buildIndex(ResultSet rs) throws SQLException, IOException {
     int counter = 0;
     while (rs.next()) {
-      int id = rs.getInt("id");
-      String title = rs.getString("title");
-      String body = rs.getString("body");
-      int answerId = rs.getInt("acceptedAnswerId");
+      int id = rs.getInt(PostField.ID.toString());
+      String title = rs.getString(PostField.TITLE.toString());
+      String body = rs.getString(PostField.BODY.toString());
+      int answerId = rs.getInt(PostField.ANSWERID.toString());
 
       Post post = new Post(id, title, body, answerId);
       indexer.index(post);
@@ -82,8 +81,7 @@ public class Driver {
         + "in INDEX_PATH that can be searched with SearchFiles";
 
     if (args.length < 2) {
-      System.out.println(usage);
-      System.exit(-1);
+      throw new Exception(usage);
     }
     CommandLine cmd = null;
 

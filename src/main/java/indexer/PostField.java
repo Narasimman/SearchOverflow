@@ -1,0 +1,1 @@
+package indexer;public enum PostField {  ID,  TITLE,  BODY,  ANSWERID}

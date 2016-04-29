@@ -86,18 +86,18 @@ public class Indexer {
     }
 
     Document doc = new Document();
-    doc.add(new IntField("id", post.getId(), Field.Store.YES));
+    doc.add(new IntField(PostField.ID.toString(), post.getId(), Field.Store.YES));
     
     if(post.getTitle() != null) {
-      doc.add(new StringField("title", post.getTitle(), Field.Store.YES));
+      doc.add(new StringField(PostField.TITLE.toString(), post.getTitle(), Field.Store.YES));
     }
     
     if(post.getBody() != null) {
-      doc.add(new StringField("body", post.getBody(), Field.Store.YES));
+      doc.add(new StringField(PostField.BODY.toString(), post.getBody(), Field.Store.YES));
     }
     
     if(post.getAcceptedAnswerId() != 0) {
-      doc.add(new IntField("answerId", post.getAcceptedAnswerId(),
+      doc.add(new IntField(PostField.ANSWERID.toString(), post.getAcceptedAnswerId(),
           Field.Store.YES));
     }
     return doc;
