@@ -7,7 +7,8 @@ sourceCompatibility = 1.5
 version = '1.0'
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Search Overflow', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'Search Overflow', 'Implementation-Version': version,
+        'Main-Class': 'indexer.Driver'
     }
 }
 
@@ -49,13 +50,4 @@ uploadArchives {
            dirs 'repos'
        }
     }
-}
-
-mainClassName = 'indexer.Driver'
-task searchOverFlow(type: Jar) {
-    baseName = "Driver"
-    
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-
-}
+} 
