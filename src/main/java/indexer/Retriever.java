@@ -123,7 +123,7 @@ public class Retriever {
 
   private void getAnswers(List<String> ansList, boolean isLocal) throws IOException, SQLException {
     if(isLocal) {
-      String q = "Select Id, body, score from Posts where PostTypeId='2' and Id in (";
+      String q = "Select Id, body, score, ParentId from Posts where PostTypeId='2' and Id in (";
       for(String id : ansList) {
         q += id + ","; 
       }
@@ -132,7 +132,7 @@ public class Retriever {
       q = q.substring(0, q.length() - 1) + ")";
       ResultSet rs = connection.executeQuery(q);
 
-      while(rs.next()) {
+      while(rs.next()) {        
         int parentId = rs.getInt("ParentId");
         int answerId = rs.getInt("Id");
         int score = rs.getInt("score");
