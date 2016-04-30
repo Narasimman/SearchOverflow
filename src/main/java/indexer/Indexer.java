@@ -75,8 +75,8 @@ public class Indexer {
 
   /**
    * Adds the following properties of a post into a lucene document id title
-   * body acceptedAnswerId
-   * Added new properties to calculate post score
+   * body acceptedAnswerId Added new properties to calculate post score
+   * 
    * @param post
    * @return Lucene Document
    */
@@ -87,31 +87,33 @@ public class Indexer {
 
     Document doc = new Document();
     doc.add(new IntField(PostField.ID.toString(), post.getId(), Field.Store.YES));
-    
-    if(post.getTitle() != null) {
-      doc.add(new TextField(PostField.TITLE.toString(), post.getTitle(), Field.Store.YES));
-    }
-    
-    if(post.getBody() != null) {
-      doc.add(new TextField(PostField.BODY.toString(), post.getBody(), Field.Store.YES));
-    }
-    
-    if(post.getAcceptedAnswerId() != 0) {
-      doc.add(new IntField(PostField.ACCEPTEDANSWERID.toString(), post.getAcceptedAnswerId(),
+
+    if (post.getTitle() != null) {
+      doc.add(new TextField(PostField.TITLE.toString(), post.getTitle(),
           Field.Store.YES));
     }
-    if(post.getScore() != 0) {
-        doc.add(new IntField(PostField.SCORE.toString(), post.getScore(),
-            Field.Store.YES));
-      }
-    if(post.getViewCount() != 0) {
-        doc.add(new IntField(PostField.VIEWCOUNT.toString(), post.getViewCount(),
-            Field.Store.YES));
-      }
-    if(post.getFavCount() != 0) {
-        doc.add(new IntField(PostField.FAVORITECOUNT.toString(), post.getFavCount(),
-            Field.Store.YES));
-      }
+
+    if (post.getBody() != null) {
+      doc.add(new TextField(PostField.BODY.toString(), post.getBody(),
+          Field.Store.YES));
+    }
+
+    if (post.getAcceptedAnswerId() != 0) {
+      doc.add(new IntField(PostField.ACCEPTEDANSWERID.toString(), post
+          .getAcceptedAnswerId(), Field.Store.YES));
+    }
+    if (post.getScore() != 0) {
+      doc.add(new IntField(PostField.SCORE.toString(), post.getScore(),
+          Field.Store.YES));
+    }
+    if (post.getViewCount() != 0) {
+      doc.add(new IntField(PostField.VIEWCOUNT.toString(), post.getViewCount(),
+          Field.Store.YES));
+    }
+    if (post.getFavCount() != 0) {
+      doc.add(new IntField(PostField.FAVORITECOUNT.toString(), post
+          .getFavCount(), Field.Store.YES));
+    }
     return doc;
   }
 }

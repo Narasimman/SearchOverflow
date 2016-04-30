@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 public class SearchServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
   private static final String indexPath = "index";
-  private static final String dataDir = "Prog1ExampleDirectory";
 
   /**
    * @see HttpServlet#HttpServlet()
@@ -38,7 +37,6 @@ public class SearchServlet extends HttpServlet {
       response.setContentType("text/html; charset=UTF-8");
 
       request.setAttribute("res", result);
-      request.setAttribute("dataDir", dataDir);
       request.getRequestDispatcher("/result.jsp").forward(request, response);
     } catch (Exception e) {
       e.printStackTrace();

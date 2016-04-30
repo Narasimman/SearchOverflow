@@ -14,6 +14,7 @@ import db.Database;
 
 /**
  * Driver class
+ * 
  * @author Narasimman
  * 
  */
@@ -32,7 +33,7 @@ public class Driver {
    * @throws ClassNotFoundException
    */
   public Driver(String indexPath, String dbPath) throws SQLException,
-  IOException, ClassNotFoundException {
+      IOException, ClassNotFoundException {
     if (indexPath == null || dbPath == null) {
       throw new IllegalArgumentException(ERR_INVALID_PATH);
     }
@@ -57,8 +58,9 @@ public class Driver {
       int score = rs.getInt(PostField.SCORE.toString());
       int viewCount = rs.getInt(PostField.VIEWCOUNT.toString());
       int favoriteCount = rs.getInt(PostField.FAVORITECOUNT.toString());
-      
-      Post post = new Post(id, title, body, answerId, score, viewCount, favoriteCount);
+
+      Post post = new Post(id, title, body, answerId, score, viewCount,
+          favoriteCount);
       indexer.index(post);
 
       // /////TODO:
