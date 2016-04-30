@@ -9,6 +9,8 @@ public class Answer {
   private final int id;
   private final int score;
   private final String body;
+  private double weightedScore; 
+  private int userScore;
 
   public Answer(int id, int score, String body) {
     if(id == 0) {
@@ -31,7 +33,24 @@ public class Answer {
   public String getBody() {
     return body;
   }
-
+  
+  public double getWeightedScore()
+  {
+	  return score/100;
+  }
+  public int getUserScore()
+  {
+	  return userScore;
+  }
+  public void setUserScore(int userScore)
+  {
+	  this.userScore = userScore;
+  }
+  
+  public double getWeightedUserScore()
+  {
+	  return userScore/1000;
+  }
   @Override
   public String toString() {
     return "Answer [id=" + id + ", score=" + score + "]";
