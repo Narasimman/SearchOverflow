@@ -47,9 +47,9 @@ public class JsonParser {
 
       if (entity != null) {
         instream = entity.getContent();
-        //BufferedReader rd = new BufferedReader(new InputStreamReader(
-            //new GZIPInputStream(instream), Charset.forName("UTF-8")));
-        
+        // BufferedReader rd = new BufferedReader(new InputStreamReader(
+        // new GZIPInputStream(instream), Charset.forName("UTF-8")));
+
         BufferedReader rd = new BufferedReader(new InputStreamReader(instream));
         String jsonText = readAll(rd);
 
@@ -62,7 +62,7 @@ public class JsonParser {
           result.add(jsonobject);
         }
       }
-    } catch (JSONException e) {      
+    } catch (JSONException e) {
       e.printStackTrace();
     } finally {
       instream.close();
@@ -71,7 +71,8 @@ public class JsonParser {
     return result;
   }
 
-  public static List<JSONObject> getAnswers(List<String> ansList) throws IOException {
+  public static List<JSONObject> getAnswers(List<String> ansList)
+      throws IOException {
     String url = BASE_URL + "answers/";
 
     for (int i = 0; i < ansList.size(); i++) {
@@ -80,7 +81,8 @@ public class JsonParser {
         url += ";";
       }
     }
-    url = url + "?order=desc&sort=activity&site=stackoverflow&filter=!9YdnSMKKT";
+    url = url
+        + "?order=desc&sort=activity&site=stackoverflow&filter=!9YdnSMKKT";
 
     System.out.println("Calling API with url: " + url);
     List<JSONObject> answers = getJson(url);

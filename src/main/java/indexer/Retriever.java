@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -40,9 +39,11 @@ import parser.JsonParser;
 import db.Database;
 
 /**
- * Retriver that takes the index Path and the query and searches the index for matches.
+ * Retriver that takes the index Path and the query and searches the index for
+ * matches.
+ * 
  * @author Narasimman
- *
+ * 
  */
 public class Retriever {
   public static final int MAX_LIMIT = 100;
@@ -55,24 +56,19 @@ public class Retriever {
     connection = new Database(dbPath);
   }
 
-  private Post search(String indexPath, String[] q)
-      throws IOException, org.apache.lucene.queryparser.classic.ParseException, SQLException {
+  private Post search(String indexPath, String[] q) throws IOException,
+  org.apache.lucene.queryparser.classic.ParseException, SQLException {
     Path path = FileSystems.getDefault().getPath(indexPath);
     Directory dir = FSDirectory.open(path);
 
     IndexReader reader = DirectoryReader.open(dir);
-    IndexSearcher is = new IndexSearcher(reader);
-    //QueryParser parser = new QueryParser(PostField.TITLE.toString(),
-    //  new StandardAnalyzer());
+    IndexSearcher indexSearcher = new IndexSearcher(reader);
 
     Analyzer analyzer = new StandardAnalyzer();
-    MultiFieldQueryParser parser = new MultiFieldQueryParser(
-        new String[] {PostField.TITLE.toString(), 
-            PostField.BODY.toString()},
-            analyzer);
+    MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[] {
+        PostField.TITLE.toString(), PostField.BODY.toString() }, analyzer);
 
     String queryStr = "";
-
     for (String s : q) {
       queryStr += s + " ";
     }
@@ -81,11 +77,13 @@ public class Retriever {
 
     long start = System.currentTimeMillis();
 
+
     //TopDocs hits = is.search(query, MAX_LIMIT);
     //sort the index based on the score. 
     Sort sort = new Sort( new SortField((PostField.SCORE.toString()), SortField.Type.INT , true));
-    TopDocs hits = is.search(query, MAX_LIMIT, sort);
+    TopDocs hits = indexSearcher.search(query, MAX_LIMIT, sort);
     
+
     long end = System.currentTimeMillis();
 
     System.out.println("Found " + hits.totalHits + " document(s) (in "
@@ -95,20 +93,19 @@ public class Retriever {
 
     for (int i = 0; i < hits.scoreDocs.length; i++) {
       ScoreDoc scoreDoc = hits.scoreDocs[i];
-      
-      Document doc = is.doc(scoreDoc.doc);
-      
-      
+      Document doc = indexSearcher.doc(scoreDoc.doc);
+      double luceneScore = scoreDoc.score;
+
       String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());
-      if(answerId != null) {
+      if (answerId != null) {
         ansList.add(answerId);
       }
 
       postsMap.put(Integer.parseInt((doc.get(PostField.ID.toString()))),
-          buildPost(doc));      
+          buildPost(doc, luceneScore));
     }
 
-    populateAnswers(ansList, true); 
+    populateAnswers(ansList, true);
 
     System.out.println(postsMap);
     computePostRanks();
@@ -118,57 +115,41 @@ public class Retriever {
   }
 
   private Post getTopPost() {
-    // TODO Auto-generated method stub
-	  
     return orderedPosts.poll();
   }
 
   private void computePostRanks() {
-	  // I have my post map
-	  //I have the final Score field.
-	  //Need user score
-	  Comparator<Post> comparator = new PostComparator();
-	  orderedPosts = new PriorityQueue<Post>(comparator);
-	  
-	  Iterator it = postsMap.entrySet().iterator();
-	  while(it.hasNext())
-	  {
-		  Map.Entry postIdPair = (Map.Entry)it.next();
-		  Post post = (Post)postIdPair.getValue();
-		  double postScore = post.getWeightScore();
-		  double ansScore = post.getAnsObj().getWeightedScore();
-		  double userScore = post.getAnsObj().getWeightedUserScore();
-		  double luceneScore = 0;
-		  
-		  double finalScore = postScore+ansScore+userScore+luceneScore;
-		  post.setFinalScore(finalScore);
-		  orderedPosts.add(post);		  
-	  }  
+    Comparator<Post> comparator = new PostComparator();
+    orderedPosts = new PriorityQueue<Post>(MAX_LIMIT, comparator);
 
+    for (Post post : postsMap.values()) {
+      double postScore = post.getWeightScore();
+      double ansScore = post.getAnsObj().getWeightedScore();
+      double userScore = post.getAnsObj().getWeightedUserScore();
+
+      double finalScore = postScore + ansScore + userScore;
+      post.setFinalScore(finalScore);
+      orderedPosts.add(post);
+    }
   }
 
-  public String retrieve(String indexPath, String query) 
-      throws IOException, org.apache.lucene.queryparser.classic.ParseException, SQLException {
-    Post bestPost = search(indexPath, query.split(" "));
-    return bestPost.getBody();
-  }
-
-  private void populateAnswers(List<String> ansList, boolean isLocal) throws IOException, SQLException {
-    if(isLocal) {
+  private void populateAnswers(List<String> ansList, boolean isLocal)
+      throws IOException, SQLException {
+    if (isLocal) {
       String q = "Select Id, body, score, ParentId from Posts where PostTypeId='2' and Id in (";
-      for(String id : ansList) {
-        q += id + ","; 
+      for (String id : ansList) {
+        q += id + ",";
       }
 
-      //#TODO
+      // #TODO
       q = q.substring(0, q.length() - 1) + ")";
       ResultSet rs = connection.executeQuery(q);
 
-      while(rs.next()) {        
-        int parentId = rs.getInt("ParentId");
-        int answerId = rs.getInt("Id");
-        int score = rs.getInt("score");
-        String body = rs.getString("body");
+      while (rs.next()) {
+        int parentId = rs.getInt(PostField.FAVORITECOUNT.toString());
+        int answerId = rs.getInt(PostField.ID.toString());
+        int score = rs.getInt(PostField.SCORE.toString());
+        String body = rs.getString(PostField.BODY.toString());
         Answer answer = new Answer(answerId, score, body);
         addToPost(parentId, answer);
       }
@@ -189,16 +170,13 @@ public class Retriever {
       try {
         int parentId = answer.getInt("question_id");
 
-        Post parentPost = postsMap.get(parentId);
-        	
         int answerId = answer.getInt("answer_id");
         int score = answer.getInt("score");
         String body = answer.getString("body");
-        JSONObject userObj = answer.getJSONObject("owner");
-        
-        
+        JSONObject user = answer.getJSONObject("owner");
+
         Answer ans = new Answer(answerId, score, body);
-        ans.setUserScore(userObj.getInt("reputation"));
+        ans.setUserScore(user.getInt("reputation"));
 
         addToPost(parentId, ans);
       } catch (JSONException e) {
@@ -207,7 +185,7 @@ public class Retriever {
     }
   }
 
-  public Post buildPost(Document doc) {
+  private Post buildPost(Document doc, double luceneScore) {
     int id = 0;
     int acceptedAnsId = 0;
     int score = 0;
@@ -219,7 +197,8 @@ public class Retriever {
     }
 
     if (doc.get(PostField.ACCEPTEDANSWERID.toString()) != null) {
-      acceptedAnsId = Integer.parseInt(doc.get(PostField.ACCEPTEDANSWERID.toString()));
+      acceptedAnsId = Integer.parseInt(doc.get(PostField.ACCEPTEDANSWERID
+          .toString()));
     }
 
     if (doc.get(PostField.SCORE.toString()) != null) {
@@ -234,13 +213,17 @@ public class Retriever {
       favCount = Integer.parseInt(doc.get(PostField.FAVORITECOUNT.toString()));
     }
 
-    Post post = new Post.PostBuilder(id)
-    .acceptedAnswerId(acceptedAnsId)
-    .score(score)
-    .viewCount(viewCount)
-    .favoriteCount(favCount).build();
+    Post post = new Post.PostBuilder(id).acceptedAnswerId(acceptedAnsId)
+        .score(score).viewCount(viewCount).favoriteCount(favCount)
+        .luceneScore(luceneScore).build();
 
     return post;
+  }
+
+  public String retrieve(String indexPath, String query) throws IOException,
+  org.apache.lucene.queryparser.classic.ParseException, SQLException {
+    Post bestPost = search(indexPath, query.split(" "));
+    return bestPost.getBody();
   }
 
   public static void main(String[] args) throws Exception {
@@ -273,7 +256,6 @@ public class Retriever {
     String indexPath = cmd.getOptionValue("index");
     String dbPath = cmd.getOptionValue("db");
     String[] query = cmd.getOptionValues("q");
-
 
     Retriever ret = new Retriever(dbPath);
     Post result = ret.search(indexPath, query);

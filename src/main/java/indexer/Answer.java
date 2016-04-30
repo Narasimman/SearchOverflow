@@ -2,18 +2,19 @@ package indexer;
 
 /**
  * Answer object that is attached to a question to calculate score
+ * 
  * @author Narasimman
- *
+ * 
  */
 public class Answer {
   private final int id;
   private final int score;
   private final String body;
-  private double weightedScore; 
+  private double weightedScore;
   private int userScore;
 
   public Answer(int id, int score, String body) {
-    if(id == 0) {
+    if (id == 0) {
       throw new IllegalArgumentException("Invalid Id for answer");
     }
 
@@ -33,24 +34,23 @@ public class Answer {
   public String getBody() {
     return body;
   }
-  
-  public double getWeightedScore()
-  {
-	  return score/100;
+
+  public double getWeightedScore() {
+    return score / 100;
   }
-  public int getUserScore()
-  {
-	  return userScore;
+
+  public int getUserScore() {
+    return userScore;
   }
-  public void setUserScore(int userScore)
-  {
-	  this.userScore = userScore;
+
+  public void setUserScore(int userScore) {
+    this.userScore = userScore;
   }
-  
-  public double getWeightedUserScore()
-  {
-	  return userScore/1000;
+
+  public double getWeightedUserScore() {
+    return userScore / 1000;
   }
+
   @Override
   public String toString() {
     return "Answer [id=" + id + ", score=" + score + "]";
