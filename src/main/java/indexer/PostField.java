@@ -1,1 +1,1 @@
-package indexer;public enum PostField {  ID,  TITLE,  BODY,  ACCEPTEDANSWERID}
+package indexer;public enum PostField {  ID,  TITLE,  BODY,  ACCEPTEDANSWERID,  SCORE,  VIEWCOUNT,  FAVORITECOUNT  }

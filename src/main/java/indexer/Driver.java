@@ -54,8 +54,11 @@ public class Driver {
       String title = rs.getString(PostField.TITLE.toString());
       String body = rs.getString(PostField.BODY.toString());
       int answerId = rs.getInt(PostField.ACCEPTEDANSWERID.toString());
-
-      Post post = new Post(id, title, body, answerId);
+      int score = rs.getInt(PostField.SCORE.toString());
+      int viewCount = rs.getInt(PostField.VIEWCOUNT.toString());
+      int favoriteCount = rs.getInt(PostField.FAVORITECOUNT.toString());
+      
+      Post post = new Post(id, title, body, answerId, score, viewCount, favoriteCount);
       indexer.index(post);
 
       // /////TODO:

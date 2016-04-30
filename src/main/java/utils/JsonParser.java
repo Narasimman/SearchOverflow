@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.HttpEntity;
@@ -18,35 +19,15 @@ import org.json.JSONObject;
 
 public class JsonParser {
 
-  public static void main(String[] args) throws Exception
-  {
-    String url = args[0];
-    System.out.println(args[0]);
-
-    JsonParser so = new JsonParser(); 
-    so.getJSONObj(url);
-
-
-  }
-
-  //	private static String readUrl(String urlString) throws Exception {
-  //	    BufferedReader reader = null;
-  //	    try {
-  //	        URL url = new URL(urlString);
-  //	        reader = new BufferedReader(new InputStreamReader(url.openStream()));
-  //	        StringBuffer buffer = new StringBuffer();
-  //	        int read;
-  //	        char[] chars = new char[1024];
-  //	        while ((read = reader.read(chars)) != -1)
-  //	            buffer.append(chars, 0, read); 
-  //
-  //	        return buffer.toString();
-  //	    } finally {
-  //	        if (reader != null)
-  //	            reader.close();
-  //	    }
-  //	}
-  //	
+//  public static void main(String[] args) throws Exception
+//  {
+//    String url = args[0];
+//    System.out.println(args[0]);
+//
+//    JsonParser so = new JsonParser(); 
+//    so.getJSONObj(url);
+//    
+//  }
 
   private static String readAll(Reader rd) throws IOException {
     StringBuilder sb = new StringBuilder();
@@ -78,6 +59,11 @@ public class JsonParser {
         String jsonText = readAll(rd);
 
         returned = new JSONObject(jsonText);
+        System.out.println(returned.getJSONArray("items"));
+        // convert jsonarray to json object
+        // eitheriterate or find theapi
+        returned = new JSONObject(returned.getJSONArray("items"));
+        
         System.out.println(returned);
         instream.close();
       }
@@ -86,5 +72,31 @@ public class JsonParser {
 
     return returned;
   }
+  
+  
+  public static JSONObject getAnsJSON(List<String> ansList)
+  {
+	  
+	  String url = "https://api.stackexchange.com/2.2/answers/";
+	  for(int i = 0; i < ansList.size(); i++)
+	  {
+		  url = url + ansList.get(i);
+		  if(i != ansList.size() - 1) {
+			  url += ";";
+		  }
+	  }
+	  url = url + "?order=desc&sort=activity&site=stackoverflow";
+			  
+	  System.out.println("COnstructed ans id url is " + url);
+	  JsonParser jp = new JsonParser();
+	  JSONObject anslistJSON = jp.getJSONObj(url);
+	 // System.out.println("after obj construction");
+	  return anslistJSON;
+  }
+  
+  
+  
+  
+  
 }
 
