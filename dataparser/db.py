@@ -4,8 +4,8 @@ import xml.etree.cElementTree as etree
 import logging
 
 schema = {
-  'smallPosts': {
-    'Id': 'INTEGER',
+  'Posts': {
+    'Id': 'INTEGER PRIMARY KEY',
     'PostTypeId': 'INTEGER',  # 1: Question, 2: Answer
     'ParentID': 'INTEGER',  # (only present if PostTypeId is 2)
     'AcceptedAnswerId': 'INTEGER',  # (only present if PostTypeId is 1)
@@ -31,8 +31,8 @@ schema = {
 
 
 def dump_files(file_names, anathomy,
-  dump_path='/home/mk5376/WSE/SearchOverflow/dataparser',
-  dump_database_name='so_dump.db',
+  dump_path='/home/ns3184/searchoverflow/dataparser',
+  dump_database_name='full_so_dump.db',
   create_query='CREATE TABLE IF NOT EXISTS {table} ({fields})',
   insert_query='INSERT INTO {table} ({columns}) VALUES ({values})', log_filename='so-parser.log'):
   logging.basicConfig(filename=os.path.join(dump_path, log_filename), level=logging.INFO)
@@ -58,23 +58,24 @@ def dump_files(file_names, anathomy,
       for events, row in tree:
         try:
           if row.attrib.values():
-            if counter%10 == 0:
+            if counter%1000 == 0:
               print "Done " + str(counter)
             query = insert_query.format(
               table=table_name,
               columns=', '.join(row.attrib.keys()),
               values=('?, ' * len(row.attrib.keys()))[:-2])
             db.execute(query, row.attrib.values())
-            print ".",
             counter = counter + 1
         except Exception, e:
           logging.warning(e)
           print "x",
         finally:
           row.clear()
+      db.execute("CREATE INDEX IF NOT EXISTS Idx1 ON " + table_name + "(PostTypeId)")
+      db.execute("CREATE INDEX IF NOT EXISTS Idx2 ON " + table_name + "(ParentID)")
       print "Successfully inserted. \n"
       db.commit()
       del (tree)
 
 if __name__ == '__main__':
-    dump_files(["smallPosts"], schema)
+    dump_files(["Posts"], schema)
