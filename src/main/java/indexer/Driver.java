@@ -59,8 +59,14 @@ public class Driver {
       int viewCount = rs.getInt(PostField.VIEWCOUNT.toString());
       int favoriteCount = rs.getInt(PostField.FAVORITECOUNT.toString());
 
-      Post post = new Post(id, title, body, answerId, score, viewCount,
-          favoriteCount);
+      Post post = new Post.PostBuilder(id)
+        .title(title)
+        .body(body)
+        .acceptedAnswerId(answerId)
+        .score(score)
+        .viewCount(viewCount)
+        .favoriteCount(favoriteCount).build();
+      
       indexer.index(post);
 
       // /////TODO:

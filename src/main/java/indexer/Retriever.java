@@ -30,12 +30,20 @@ import org.json.JSONObject;
 
 import utils.JsonParser;
 
+/**
+ * Retriver that takes the index Path and the query and searches the index for matches.
+ * @author Narasimman
+ *
+ */
 public class Retriever {
-
   public static final int MAX_LIMIT = 100;
   private Map<Integer, Post> postsMap;
 
-  public Map<String, String> search(String indexPath, String[] q)
+  public Retriever() {
+    postsMap = new HashMap<Integer, Post>();
+  }
+
+  private Post search(String indexPath, String[] q)
       throws IOException, org.apache.lucene.queryparser.classic.ParseException {
     Path path = FileSystems.getDefault().getPath(indexPath);
     Directory dir = FSDirectory.open(path);
@@ -60,53 +68,62 @@ public class Retriever {
     long end = System.currentTimeMillis();
 
     System.out.println("Found " + hits.totalHits + " document(s) (in "
-        + (end - start) + " milliseconds) that matched query '" + queryStr
-        + "':");
+        + (end - start) + " milliseconds) that matched query '" + queryStr);
 
-    Map<String, String> result = new HashMap<String, String>();
-    // contains the list of Post objects with its ids with it's populated values
-    postsMap = new HashMap<Integer, Post>();
     List<String> ansList = new ArrayList<String>();
+
     for (int i = 0; i < hits.scoreDocs.length; i++) {
       ScoreDoc scoreDoc = hits.scoreDocs[i];
-
       Document doc = is.doc(scoreDoc.doc);
 
-      String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());
-      result.put(doc.get(PostField.ID.toString()), answerId);
+      String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());      
       ansList.add(answerId);
 
-      // checking is anslist is working
       postsMap.put(Integer.parseInt((doc.get(PostField.ID.toString()))),
           constructPost(doc));
       List<JSONObject> ansListJSON = getAnswers(ansList);
-      attachAnstoPost(ansListJSON);
-
+      addAnswer(ansListJSON);
     }
+
+    computePostRanks();
+    Post result = getTopPost();
 
     return result;
   }
 
-  public static String retrieve(String indexPath, String query) {
-    return "Hello";
+  private Post getTopPost() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
-  public List<JSONObject> getAnswers(List<String> ansList) {
+  private void computePostRanks() {
+    // TODO Auto-generated method stub
+
+  }
+
+  public String retrieve(String indexPath, String query) 
+      throws IOException, org.apache.lucene.queryparser.classic.ParseException {
+    Post bestPost = search(indexPath, query.split(" "));
+    return bestPost.getBody();
+  }
+
+  private List<JSONObject> getAnswers(List<String> ansList) throws IOException {
     return JsonParser.getAnswers(ansList);
   }
 
-  public void attachAnstoPost(List<JSONObject> ansList) {
+  private void addAnswer(List<JSONObject> ansList) {
     for (JSONObject answer : ansList) {
       try {
         int parentId = answer.getInt("question_id");
-        System.out.println(parentId);
 
         Post parentPost = postsMap.get(parentId);
 
-        System.out.println(parentPost);
-        Answer ans = new Answer(answer.getInt("answer_id"));
-        ans.setScore(answer.getInt("score"));
-        parentPost.setAnsObj(ans);
+        int answerId = answer.getInt("answer_id");
+        int score = answer.getInt("score");
+        String body = answer.getString("body");
+        Answer ans = new Answer(answerId, score, body);
+
+        parentPost.setAnswer(ans);
       } catch (JSONException e) {
         e.printStackTrace();
       }
@@ -124,12 +141,8 @@ public class Retriever {
       id = Integer.parseInt(doc.get(PostField.ID.toString()));
     }
 
-    String title = doc.get(PostField.TITLE.toString());
-    String body = doc.get(PostField.BODY.toString());
-
     if (doc.get(PostField.ACCEPTEDANSWERID.toString()) != null) {
-      acceptedAnsId = Integer.parseInt(doc.get(PostField.ACCEPTEDANSWERID
-          .toString()));
+      acceptedAnsId = Integer.parseInt(doc.get(PostField.ACCEPTEDANSWERID.toString()));
     }
 
     if (doc.get(PostField.SCORE.toString()) != null) {
@@ -140,11 +153,17 @@ public class Retriever {
       viewCount = Integer.parseInt(doc.get(PostField.VIEWCOUNT.toString()));
     }
 
-    if (doc.get(PostField.VIEWCOUNT.toString()) != null) {
+    if (doc.get(PostField.FAVORITECOUNT.toString()) != null) {
       favCount = Integer.parseInt(doc.get(PostField.FAVORITECOUNT.toString()));
     }
 
-    return new Post(id, title, body, acceptedAnsId, score, viewCount, favCount);
+    Post post = new Post.PostBuilder(id)
+    .acceptedAnswerId(acceptedAnsId)
+    .score(score)
+    .viewCount(viewCount)
+    .favoriteCount(favCount).build();
+
+    return post;
   }
 
   public static void main(String[] args) throws Exception {
@@ -175,8 +194,10 @@ public class Retriever {
     }
     String indexPath = cmd.getOptionValue("index");
     String[] query = cmd.getOptionValues("q");
+
+
     Retriever ret = new Retriever();
-    Map<String, String> result = ret.search(indexPath, query);
+    Post result = ret.search(indexPath, query);
 
     System.out.println(result);
   }

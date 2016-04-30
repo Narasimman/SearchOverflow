@@ -90,12 +90,12 @@ public class Indexer {
 
     if (post.getTitle() != null) {
       doc.add(new TextField(PostField.TITLE.toString(), post.getTitle(),
-          Field.Store.YES));
+          Field.Store.NO));
     }
 
     if (post.getBody() != null) {
       doc.add(new TextField(PostField.BODY.toString(), post.getBody(),
-          Field.Store.YES));
+          Field.Store.NO));
     }
 
     if (post.getAcceptedAnswerId() != 0) {

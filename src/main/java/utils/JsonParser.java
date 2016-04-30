@@ -14,21 +14,13 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class JsonParser {
-
-  // public static void main(String[] args) throws Exception
-  // {
-  // String url = args[0];
-  // System.out.println(args[0]);
-  //
-  // JsonParser so = new JsonParser();
-  // so.getJSONObj(url);
-  //
-  // }
+  private static final String BASE_URL = "https://api.stackexchange.com/2.2/";
 
   private static String readAll(Reader rd) throws IOException {
     StringBuilder sb = new StringBuilder();
@@ -39,27 +31,28 @@ public class JsonParser {
     return sb.toString();
   }
 
-  // returns the json object given the URL
-  protected List<JSONObject> getJSONObj(String url) {
+  private static List<JSONObject> getJSONObj(String url) throws IOException {
+    HttpClient client = HttpClientBuilder.create().build();
+    HttpGet request = new HttpGet(url);
+    request.addHeader("accept", "application/json");
 
-    HttpClient httpclient = new DefaultHttpClient();
-    HttpGet httpget = new HttpGet(url);
-    httpget.addHeader("accept", "application/json");
-    JSONObject json = new JSONObject();
-    HttpResponse response;
+    HttpResponse response = null;
     List<JSONObject> result = new ArrayList<JSONObject>();
 
+    InputStream instream = null;
+
     try {
-      response = httpclient.execute(httpget);
+      response = client.execute(request);
       HttpEntity entity = response.getEntity();
 
+
       if (entity != null) {
-        InputStream instream = entity.getContent();
+        instream = entity.getContent();
         BufferedReader rd = new BufferedReader(new InputStreamReader(
             new GZIPInputStream(instream), Charset.forName("UTF-8")));
         String jsonText = readAll(rd);
 
-        json = new JSONObject(jsonText);
+        JSONObject json = new JSONObject(jsonText);
 
         JSONArray jsonItems = json.getJSONArray("items");
 
@@ -67,19 +60,19 @@ public class JsonParser {
           JSONObject jsonobject = jsonItems.getJSONObject(i);
           result.add(jsonobject);
         }
-
-        instream.close();
       }
-    } catch (Exception e) {
+    } catch (JSONException e) {      
       e.printStackTrace();
+    } finally {
+      instream.close();
     }
 
     return result;
   }
 
-  public static List<JSONObject> getAnswers(List<String> ansList) {
+  public static List<JSONObject> getAnswers(List<String> ansList) throws IOException {
+    String url = BASE_URL + "answers/";
 
-    String url = "https://api.stackexchange.com/2.2/answers/";
     for (int i = 0; i < ansList.size(); i++) {
       url = url + ansList.get(i);
       if (i != ansList.size() - 1) {
@@ -88,11 +81,10 @@ public class JsonParser {
     }
     url = url + "?order=desc&sort=activity&site=stackoverflow";
 
-    System.out.println("COnstructed ans id url is " + url);
-    JsonParser jp = new JsonParser();
-    List<JSONObject> anslistJSON = jp.getJSONObj(url);
-    // System.out.println("after obj construction");
-    return anslistJSON;
+    System.out.println("Calling API with url: " + url);
+    List<JSONObject> answers = getJSONObj(url);
+
+    return answers;
   }
 
 }
