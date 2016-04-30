@@ -32,7 +32,7 @@ public class SearchServlet extends HttpServlet {
     try {
       String query = request.getParameter("q");
 
-      //#TODO
+      // #TODO
       Retriever retriever = new Retriever("");
       String result = retriever.retrieve(indexPath, query);
 
