@@ -3,6 +3,8 @@ package indexer;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,11 +16,12 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -29,7 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import parser.JsonParser;
-
+import db.Database;
 
 /**
  * Retriver that takes the index Path and the query and searches the index for matches.
@@ -39,20 +42,28 @@ import parser.JsonParser;
 public class Retriever {
   public static final int MAX_LIMIT = 100;
   private Map<Integer, Post> postsMap;
+  private final Database connection;
 
-  public Retriever() {
+  public Retriever(String dbPath) throws ClassNotFoundException, SQLException {
     postsMap = new HashMap<Integer, Post>();
+    connection = new Database(dbPath);
   }
 
   private Post search(String indexPath, String[] q)
-      throws IOException, org.apache.lucene.queryparser.classic.ParseException {
+      throws IOException, org.apache.lucene.queryparser.classic.ParseException, SQLException {
     Path path = FileSystems.getDefault().getPath(indexPath);
     Directory dir = FSDirectory.open(path);
 
     IndexReader reader = DirectoryReader.open(dir);
     IndexSearcher is = new IndexSearcher(reader);
-    QueryParser parser = new QueryParser(PostField.TITLE.toString(),
-        new StandardAnalyzer());
+    //QueryParser parser = new QueryParser(PostField.TITLE.toString(),
+    //  new StandardAnalyzer());
+
+    Analyzer analyzer = new StandardAnalyzer();
+    MultiFieldQueryParser parser = new MultiFieldQueryParser(
+        new String[] {PostField.TITLE.toString(), 
+            PostField.BODY.toString()},
+            analyzer);
 
     String queryStr = "";
 
@@ -83,12 +94,11 @@ public class Retriever {
       }
 
       postsMap.put(Integer.parseInt((doc.get(PostField.ID.toString()))),
-          constructPost(doc));      
+          buildPost(doc));      
     }
 
-    List<JSONObject> ansListJSON = getAnswers(ansList);
-    addAnswer(ansListJSON);
-    
+    getAnswers(ansList, true); 
+
     computePostRanks();
     Post result = getTopPost();
 
@@ -106,35 +116,58 @@ public class Retriever {
   }
 
   public String retrieve(String indexPath, String query) 
-      throws IOException, org.apache.lucene.queryparser.classic.ParseException {
+      throws IOException, org.apache.lucene.queryparser.classic.ParseException, SQLException {
     Post bestPost = search(indexPath, query.split(" "));
     return bestPost.getBody();
   }
 
-  private List<JSONObject> getAnswers(List<String> ansList) throws IOException {
-    return JsonParser.getAnswers(ansList);
+  private void getAnswers(List<String> ansList, boolean isLocal) throws IOException, SQLException {
+    if(isLocal) {
+      String q = "Select Id, body, score from Posts where PostTypeId='2' and Id in (";
+      for(String id : ansList) {
+        q += id + ","; 
+      }
+
+      //#TODO
+      q = q.substring(0, q.length() - 1) + ")";
+      ResultSet rs = connection.executeQuery(q);
+
+      while(rs.next()) {
+        int parentId = rs.getInt("ParentId");
+        int answerId = rs.getInt("Id");
+        int score = rs.getInt("score");
+        String body = rs.getString("body");
+        Answer answer = new Answer(answerId, score, body);
+        addToPost(parentId, answer);
+      }
+
+    } else {
+      List<JSONObject> ansListJSON = JsonParser.getAnswers(ansList);
+      addAnswer(ansListJSON);
+    }
+  }
+
+  private void addToPost(int postId, Answer answer) {
+    Post parentPost = postsMap.get(postId);
+    parentPost.setAnswer(answer);
   }
 
   private void addAnswer(List<JSONObject> ansList) {
     for (JSONObject answer : ansList) {
       try {
         int parentId = answer.getInt("question_id");
-
-        Post parentPost = postsMap.get(parentId);
-
         int answerId = answer.getInt("answer_id");
         int score = answer.getInt("score");
         String body = answer.getString("body");
         Answer ans = new Answer(answerId, score, body);
-
-        parentPost.setAnswer(ans);
+        addToPost(parentId, ans);
       } catch (JSONException e) {
         e.printStackTrace();
       }
     }
   }
 
-  public static Post constructPost(Document doc) {
+  public Post buildPost(Document doc) {
     int id = 0;
     int acceptedAnsId = 0;
     int score = 0;
@@ -184,6 +217,7 @@ public class Retriever {
     // set options
     Options options = new Options();
     options.addOption("index", "index", true, "Index Path");
+    options.addOption("db", "db", true, "DB Path");
     Option qOption = new Option("q", "q", true, "Query");
     qOption.setArgs(Option.UNLIMITED_VALUES);
 
@@ -197,10 +231,11 @@ public class Retriever {
       e.printStackTrace();
     }
     String indexPath = cmd.getOptionValue("index");
+    String dbPath = cmd.getOptionValue("db");
     String[] query = cmd.getOptionValues("q");
 
 
-    Retriever ret = new Retriever();
+    Retriever ret = new Retriever(dbPath);
     Post result = ret.search(indexPath, query);
 
     System.out.println(result);
