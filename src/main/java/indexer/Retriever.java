@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -38,6 +41,7 @@ import utils.JsonParser;
 public class Retriever {
   public static final int MAX_LIMIT = 100;
   private Map<Integer, Post> postsMap;
+  private PriorityQueue<Post> orderedPosts;
 
   public Retriever() {
     postsMap = new HashMap<Integer, Post>();
@@ -93,11 +97,31 @@ public class Retriever {
 
   private Post getTopPost() {
     // TODO Auto-generated method stub
-    return null;
+	  
+    return orderedPosts.poll();
   }
 
   private void computePostRanks() {
-    // TODO Auto-generated method stub
+	  // I have my post map
+	  //I have the final Score field.
+	  //Need user score
+	  Comparator<Post> comparator = new PostComparator();
+	  orderedPosts = new PriorityQueue<Post>(comparator);
+	  
+	  Iterator it = postsMap.entrySet().iterator();
+	  while(it.hasNext())
+	  {
+		  Map.Entry postIdPair = (Map.Entry)it.next();
+		  Post post = (Post)postIdPair.getValue();
+		  double postScore = post.getWeightScore();
+		  double ansScore = post.getAnsObj().getWeightedScore();
+		  double userScore = post.getAnsObj().getWeightedUserScore();
+		  double luceneScore = 0;
+		  
+		  double finalScore = postScore+ansScore+userScore+luceneScore;
+		  post.setFinalScore(finalScore);
+		  orderedPosts.add(post);		  
+	  }  
 
   }
 
@@ -117,12 +141,16 @@ public class Retriever {
         int parentId = answer.getInt("question_id");
 
         Post parentPost = postsMap.get(parentId);
-
+        	
         int answerId = answer.getInt("answer_id");
         int score = answer.getInt("score");
         String body = answer.getString("body");
+        JSONObject userObj = answer.getJSONObject("owner");
+        
+        
         Answer ans = new Answer(answerId, score, body);
-
+        ans.setUserScore(userObj.getInt("reputation"));
+        
         parentPost.setAnswer(ans);
       } catch (JSONException e) {
         e.printStackTrace();
