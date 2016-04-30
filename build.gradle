@@ -74,6 +74,10 @@ test {
     systemProperties 'property': 'value'
 }
 
+task deployToTomcat(type: Copy) {
+    from war.archivePath
+    into "D:/apache-tomcat-7.0.67/webapps"
+}
 
 uploadArchives {
     repositories {

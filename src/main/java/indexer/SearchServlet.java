@@ -1,7 +1,6 @@
 package indexer;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/search")
 public class SearchServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private static final String indexDir = "index";
+  private static final String indexPath = "index";
   private static final String dataDir = "Prog1ExampleDirectory";
 
   /**
@@ -32,16 +31,13 @@ public class SearchServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
+      String query = request.getParameter("q");
 
-      // Indexer indexer = new Indexer(indexDir);
-      // int numIndexed = indexer.index(dataDir);
-      // indexer.close();
+      String result = Retriever.retrieve(indexPath, query);
 
-      //Map<String, String> result = Retriever.search(indexDir,
-        //  request.getParameter("q"));
-      response.setContentType("text/html;charset=UTF-8");
+      response.setContentType("text/html; charset=UTF-8");
 
-      //request.setAttribute("res", result);
+      request.setAttribute("res", result);
       request.setAttribute("dataDir", dataDir);
       request.getRequestDispatcher("/result.jsp").forward(request, response);
     } catch (Exception e) {
@@ -55,7 +51,7 @@ public class SearchServlet extends HttpServlet {
    */
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    // TODO Auto-generated method stub
+    doGet(request, response);
   }
 
 }

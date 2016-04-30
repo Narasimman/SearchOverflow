@@ -32,8 +32,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-
 public class Retriever {
 
 	public static final int MAX_LIMIT = 100;
@@ -100,6 +98,10 @@ public class Retriever {
   
    // System.out.println("postidand obj map " + postObjs);
     return result;
+  }
+  
+  public static String retrieve(String indexPath, String query) {
+    return "Hello";
   }
 
   public Post constructfakePost(int id)
@@ -229,5 +231,13 @@ public class Retriever {
 	  Map<String, String> result = ret.search("", null);
     //System.out.println("post and answer map " +result);
    
+//    String queryStr = "";
+
+  //  for(String s : query) {
+    //  queryStr += s + " "; 
+    //}
+    //Map<String, String> result = search(indexPath, queryStr);
+    System.out.println(result);
   }
 }
+    
