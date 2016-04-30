@@ -32,7 +32,8 @@ public class SearchServlet extends HttpServlet {
     try {
       String query = request.getParameter("q");
 
-      Retriever retriever = new Retriever();
+      //#TODO
+      Retriever retriever = new Retriever("");
       String result = retriever.retrieve(indexPath, query);
 
       response.setContentType("text/html; charset=UTF-8");
