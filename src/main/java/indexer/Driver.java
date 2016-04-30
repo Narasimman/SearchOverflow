@@ -89,6 +89,7 @@ public class Driver {
 
     // set options
     Options options = new Options();
+
     options.addOption("index", "index", true, "Index Path");
     options.addOption("db", "db", true, "SQLite DB Path");
 
@@ -104,7 +105,7 @@ public class Driver {
     String dbPath = cmd.getOptionValue("db");
 
     Driver driver = new Driver(indexPath, dbPath);
-    String query = "Select * from SmallPosts";
+    String query = "Select * from Posts where PostTypeId='1'";
 
     driver.buildIndex(driver.executeQuery(query));
   }

@@ -26,45 +26,43 @@ import org.apache.lucene.store.FSDirectory;
 
 public class Retriever {
   public static final int MAX_LIMIT = 100;
-  public static Map<String, String> search(String indexPath, String[] q) 
+  public static Map<String, String> search(String indexPath, String q) 
       throws IOException, org.apache.lucene.queryparser.classic.ParseException {
-    
+
     Path path = FileSystems.getDefault().getPath(indexPath);
     Directory dir = FSDirectory.open(path);
 
     IndexReader reader = DirectoryReader.open(dir);
     IndexSearcher is = new IndexSearcher(reader);
     QueryParser parser = new QueryParser(PostField.TITLE.toString(), new StandardAnalyzer());
-    
-    String queryStr = "";
-    
-    for(String s : q) {
-      queryStr += s + " "; 
-    }
-    
-    Query query = parser.parse(queryStr);
-    
+
+    Query query = parser.parse(q);
+
     long start = System.currentTimeMillis();
-    
+
     TopDocs hits = is.search(query, MAX_LIMIT);
-    
+
     long end = System.currentTimeMillis();
-    
+
     System.out.println("Found " + hits.totalHits + " document(s) (in "
-        + (end - start) + " milliseconds) that matched query '" + queryStr + "':");
+        + (end - start) + " milliseconds) that matched query '" + q + "':");
 
     Map<String, String> result = new HashMap<String, String>();
 
     for (int i = 0; i < hits.scoreDocs.length; i++) {
       ScoreDoc scoreDoc = hits.scoreDocs[i];
-      
+
       Document doc = is.doc(scoreDoc.doc);
-      
+
       String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());
       result.put(doc.get(PostField.ID.toString()), answerId);
 
     }
     return result;
+  }
+  
+  public static String retrieve(String indexPath, String query) {
+    return "Hello";
   }
 
   public static void main(String[] args) throws Exception {
@@ -97,7 +95,12 @@ public class Retriever {
     String indexPath = cmd.getOptionValue("index");
     String[] query = cmd.getOptionValues("q");
 
-    Map<String, String> result = search(indexPath, query);
+    String queryStr = "";
+
+    for(String s : query) {
+      queryStr += s + " "; 
+    }
+    Map<String, String> result = search(indexPath, queryStr);
     System.out.println(result);
   }
 }
