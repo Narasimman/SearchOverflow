@@ -97,8 +97,9 @@ public class Retriever {
           buildPost(doc));      
     }
 
-    getAnswers(ansList, true); 
+    populateAnswers(ansList, true); 
 
+    System.out.println(postsMap);
     computePostRanks();
     Post result = getTopPost();
 
@@ -121,7 +122,7 @@ public class Retriever {
     return bestPost.getBody();
   }
 
-  private void getAnswers(List<String> ansList, boolean isLocal) throws IOException, SQLException {
+  private void populateAnswers(List<String> ansList, boolean isLocal) throws IOException, SQLException {
     if(isLocal) {
       String q = "Select Id, body, score, ParentId from Posts where PostTypeId='2' and Id in (";
       for(String id : ansList) {
