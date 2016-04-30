@@ -28,7 +28,8 @@ import org.apache.lucene.store.FSDirectory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import utils.JsonParser;
+import parser.JsonParser;
+
 
 /**
  * Retriver that takes the index Path and the query and searches the index for matches.
