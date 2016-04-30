@@ -28,6 +28,8 @@ import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -79,8 +81,11 @@ public class Retriever {
 
     long start = System.currentTimeMillis();
 
-    TopDocs hits = is.search(query, MAX_LIMIT);
-
+    //TopDocs hits = is.search(query, MAX_LIMIT);
+    //sort the index based on the score. 
+    Sort sort = new Sort( new SortField((PostField.SCORE.toString()), SortField.Type.INT , true));
+    TopDocs hits = is.search(query, MAX_LIMIT, sort);
+    
     long end = System.currentTimeMillis();
 
     System.out.println("Found " + hits.totalHits + " document(s) (in "
@@ -90,8 +95,10 @@ public class Retriever {
 
     for (int i = 0; i < hits.scoreDocs.length; i++) {
       ScoreDoc scoreDoc = hits.scoreDocs[i];
+      
       Document doc = is.doc(scoreDoc.doc);
-
+      
+      
       String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());
       if(answerId != null) {
         ansList.add(answerId);
