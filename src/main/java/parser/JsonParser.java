@@ -80,7 +80,7 @@ public class JsonParser {
         url += ";";
       }
     }
-    url = url + "?order=desc&sort=activity&site=stackoverflow";
+    url = url + "?order=desc&sort=activity&site=stackoverflow&filter=!9YdnSMKKT";
 
     System.out.println("Calling API with url: " + url);
     List<JSONObject> answers = getJson(url);

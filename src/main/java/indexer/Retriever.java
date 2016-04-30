@@ -83,11 +83,12 @@ public class Retriever {
       }
 
       postsMap.put(Integer.parseInt((doc.get(PostField.ID.toString()))),
-          constructPost(doc));
-      List<JSONObject> ansListJSON = getAnswers(ansList);
-      addAnswer(ansListJSON);
+          constructPost(doc));      
     }
 
+    List<JSONObject> ansListJSON = getAnswers(ansList);
+    addAnswer(ansListJSON);
+    
     computePostRanks();
     Post result = getTopPost();
 
