@@ -27,7 +27,7 @@ public class Answer {
   public int getScore() {
     return score;
   }
-  
+
   public String getBody() {
     return body;
   }

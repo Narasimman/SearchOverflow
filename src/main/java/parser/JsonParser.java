@@ -31,7 +31,7 @@ public class JsonParser {
     return sb.toString();
   }
 
-  private static List<JSONObject> getJSONObj(String url) throws IOException {
+  private static List<JSONObject> getJson(String url) throws IOException {
     HttpClient client = HttpClientBuilder.create().build();
     HttpGet request = new HttpGet(url);
     request.addHeader("accept", "application/json");
@@ -45,11 +45,12 @@ public class JsonParser {
       response = client.execute(request);
       HttpEntity entity = response.getEntity();
 
-
       if (entity != null) {
         instream = entity.getContent();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(
-            new GZIPInputStream(instream), Charset.forName("UTF-8")));
+        //BufferedReader rd = new BufferedReader(new InputStreamReader(
+            //new GZIPInputStream(instream), Charset.forName("UTF-8")));
+        
+        BufferedReader rd = new BufferedReader(new InputStreamReader(instream));
         String jsonText = readAll(rd);
 
         JSONObject json = new JSONObject(jsonText);
@@ -82,7 +83,7 @@ public class JsonParser {
     url = url + "?order=desc&sort=activity&site=stackoverflow";
 
     System.out.println("Calling API with url: " + url);
-    List<JSONObject> answers = getJSONObj(url);
+    List<JSONObject> answers = getJson(url);
 
     return answers;
   }

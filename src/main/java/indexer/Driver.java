@@ -117,7 +117,6 @@ public class Driver {
 
     Driver driver = new Driver(indexPath, dbPath);
     String query = "Select * from Posts where PostTypeId='1'";
-
     driver.buildIndex(driver.executeQuery(query));
   }
 }

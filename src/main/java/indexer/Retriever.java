@@ -77,8 +77,10 @@ public class Retriever {
       ScoreDoc scoreDoc = hits.scoreDocs[i];
       Document doc = is.doc(scoreDoc.doc);
 
-      String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());      
-      ansList.add(answerId);
+      String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());
+      if(answerId != null) {
+        ansList.add(answerId);
+      }
 
       postsMap.put(Integer.parseInt((doc.get(PostField.ID.toString()))),
           constructPost(doc));
