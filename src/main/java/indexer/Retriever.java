@@ -94,7 +94,7 @@ public class Retriever {
       }
 
       postsMap.put(Integer.parseInt((doc.get(PostField.ID.toString()))),
-          buildPost(doc));      
+          buildPost(doc));
     }
 
     populateAnswers(ansList, true); 
@@ -168,7 +168,7 @@ public class Retriever {
     }
   }
 
-  public Post buildPost(Document doc) {
+  private Post buildPost(Document doc) {
     int id = 0;
     int acceptedAnsId = 0;
     int score = 0;
