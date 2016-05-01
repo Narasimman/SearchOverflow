@@ -123,8 +123,15 @@ public class Retriever {
 
     for (Post post : postsMap.values()) {
       double postScore = post.getWeightScore();
-      double ansScore = post.getAnsObj().getWeightedScore();
-      double userScore = post.getAnsObj().getWeightedUserScore();
+      
+      Answer ans = post.getAnsObj();
+      
+      double ansScore = 0.0;
+      double userScore = 0.0;
+      if(ans != null) {
+        ansScore = post.getAnsObj().getWeightedScore();
+        userScore = post.getAnsObj().getWeightedUserScore();
+      }
 
       double finalScore = postScore + ansScore + userScore;
       post.setFinalScore(finalScore);
@@ -135,7 +142,7 @@ public class Retriever {
   private void populateAnswers(List<String> ansList, boolean isLocal)
       throws IOException, SQLException {
     if (isLocal) {
-      String q = "Select Id, body, score, ParentId, favoritecount from Posts where PostTypeId='2' and Id in (";
+      String q = "Select Id, body, score, ParentId from Posts where PostTypeId='2' and Id in (";
       for (String id : ansList) {
         q += id + ",";
       }
