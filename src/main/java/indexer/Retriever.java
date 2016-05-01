@@ -223,7 +223,7 @@ public class Retriever {
         + "This requires a path to the index file created by lucene"
         + " and query terms to search for";
 
-    if (args.length < 2) {
+    if (args.length < 3) {
       throw new Exception(usage);
     }
     CommandLine cmd = null;

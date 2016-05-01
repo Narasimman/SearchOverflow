@@ -10,7 +10,6 @@ public class Answer {
   private final int id;
   private final int score;
   private final String body;
-  private double weightedScore;
   private int userScore;
 
   public Answer(int id, int score, String body) {
