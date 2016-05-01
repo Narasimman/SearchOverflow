@@ -48,11 +48,11 @@ task retrieverjar(type: Jar) {
 
     manifest {
         attributes 'Implementation-Title': 'Search Overflow', 'Implementation-Version': version,
-        'Main-Class': 'indexer.Retriever'
+        'Main-Class': 'search.Retriever'
     }
 
     baseName = "retriever"
-    mainClassName = 'indexer.Retriever'
+    mainClassName = 'search.Retriever'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     from fileTree(buildDir).matching{ include 'META-INF/services/*' }
     with jar

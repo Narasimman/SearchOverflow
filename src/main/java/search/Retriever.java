@@ -1,4 +1,4 @@
-package indexer;
+package search;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -6,11 +6,9 @@ import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -36,7 +34,6 @@ import org.json.JSONObject;
 import parser.JSONParser;
 import stackoverflow.Answer;
 import stackoverflow.Post;
-import stackoverflow.PostComparator;
 import stackoverflow.PostField;
 import db.Database;
 
@@ -48,15 +45,16 @@ import db.Database;
  * 
  */
 public class Retriever {
-  private static final int MAX_LIMIT = 100;
+  public static final int MAX_LIMIT = 100;
   private static final String NOT_FOUND = "Best Answer Not Found";
   private Map<Integer, Post> postsMap;
-  private PriorityQueue<Post> orderedPosts;
   private final Database connection;
+  private Ranker ranker;
 
   public Retriever(String dbPath) throws ClassNotFoundException, SQLException {
     postsMap = new HashMap<Integer, Post>();
     connection = new Database(dbPath);
+    ranker = new Ranker(postsMap);
   }
 
   /**
@@ -93,7 +91,7 @@ public class Retriever {
     long start = System.currentTimeMillis();
 
     //sort the index based on the score. 
-    //Sort sort = new Sort(SortField.FIELD_SCORE, new SortField((PostField.SCORE.toString()), SortField.Type.STRING_VAL, true));    
+    //Sort sort = new Sort(SortField.FIELD_SCORE, new SortField((PostField.SCORE.toString()), SortField.Type.STRING_VAL, true));
     TopDocs hits = indexSearcher.search(query, MAX_LIMIT);
 
     long end = System.currentTimeMillis();
@@ -119,36 +117,10 @@ public class Retriever {
     populateAnswers(ansList, true);
 
     //System.out.println(postsMap);
-    computePostRanks();
-    Post result = getTopPost();
+    ranker.computePostRanks();
+    Post result = ranker.getTopPost();
 
     return result;
-  }
-
-  private Post getTopPost() {
-    return orderedPosts.poll();
-  }
-
-  private void computePostRanks() {
-    Comparator<Post> comparator = new PostComparator();
-    orderedPosts = new PriorityQueue<Post>(MAX_LIMIT, comparator);
-
-    for (Post post : postsMap.values()) {
-      double postScore = post.getWeightScore();
-
-      Answer ans = post.getAnswer();
-
-      double ansScore = 0.0;
-      double userScore = 0.0;
-      if(ans != null) {
-        ansScore = post.getAnswer().getWeightedScore();
-        userScore = post.getAnswer().getWeightedUserScore();
-      }
-
-      double finalScore = postScore + ansScore + userScore;
-      post.setFinalScore(finalScore);
-      orderedPosts.add(post);
-    }
   }
 
   private void populateAnswers(List<String> ansList, boolean isLocal)
@@ -165,7 +137,7 @@ public class Retriever {
       }
 
       // #TODO
-      
+
       q = q.substring(0, q.length() - 1) + ")";
       System.out.println(q);
       ResultSet rs = connection.executeQuery(q);
@@ -196,7 +168,6 @@ public class Retriever {
     for (JSONObject answer : ansList) {
       try {
         int parentId = answer.getInt("question_id");
-
         int answerId = answer.getInt("answer_id");
         int score = answer.getInt("score");
         String body = answer.getString("body");

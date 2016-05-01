@@ -92,7 +92,7 @@ public class IndexBuilder {
   public static void main(String[] args) throws Exception {
 
     String usage = "Usage: " + IndexBuilder.class.getName()
-        + " [-index INDEX_PATH] [-db db_path][-update]\n\n"
+        + " [-index INDEX_PATH] [-db db_path]\n\n"
         + "This indexes the entries in the sqlite db, creating a Lucene index"
         + "in INDEX_PATH that can be searched with SearchFiles";
 
