@@ -55,7 +55,7 @@ public class Driver {
       String title = rs.getString(PostField.TITLE.toString());
       String body = rs.getString(PostField.BODY.toString());
       int answerId = rs.getInt(PostField.ACCEPTEDANSWERID.toString());
-      int score = rs.getInt(PostField.SCORE.toString());
+      int score = rs.getInt(PostField.VOTES.toString());
       int viewCount = rs.getInt(PostField.VIEWCOUNT.toString());
       int favoriteCount = rs.getInt(PostField.FAVORITECOUNT.toString());
       int answerCount = rs.getInt(PostField.ANSWERCOUNT.toString());

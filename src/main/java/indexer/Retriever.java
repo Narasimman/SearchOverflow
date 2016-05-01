@@ -82,7 +82,7 @@ public class Retriever {
 
 
     //sort the index based on the score. 
-    Sort sort = new Sort(new SortField((PostField.SCORE.toString()), SortField.Type.STRING_VAL, true));    
+    Sort sort = new Sort(SortField.FIELD_SCORE, new SortField((PostField.VOTES.toString()), SortField.Type.STRING_VAL, true));    
     TopDocs hits = indexSearcher.search(query, MAX_LIMIT, sort);
 
     long end = System.currentTimeMillis();
@@ -156,7 +156,7 @@ public class Retriever {
       while (rs.next()) {
         int parentId = rs.getInt(PostField.PARENTID.toString());
         int answerId = rs.getInt(PostField.ID.toString());
-        int score = rs.getInt(PostField.SCORE.toString());
+        int score = rs.getInt(PostField.VOTES.toString());
         String body = rs.getString(PostField.BODY.toString());
         Answer answer = new Answer(answerId, score, body);
         addToPost(parentId, answer);
@@ -217,8 +217,8 @@ public class Retriever {
           .toString()));
     }
 
-    if (doc.get(PostField.SCORE.toString()) != null) {
-      score = Integer.parseInt(doc.get(PostField.SCORE.toString()));
+    if (doc.get(PostField.VOTES.toString()) != null) {
+      score = Integer.parseInt(doc.get(PostField.VOTES.toString()));
     }
 
     if (doc.get(PostField.VIEWCOUNT.toString()) != null) {
