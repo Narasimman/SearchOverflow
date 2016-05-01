@@ -1,4 +1,4 @@
-package indexer;
+package stackoverflow;
 
 /**
  * Answer object that is attached to a question to calculate score

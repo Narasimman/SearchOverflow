@@ -33,7 +33,11 @@ import org.apache.lucene.store.FSDirectory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import parser.JsonParser;
+import parser.JSONParser;
+import stackoverflow.Answer;
+import stackoverflow.Post;
+import stackoverflow.PostComparator;
+import stackoverflow.PostField;
 import db.Database;
 
 /**
@@ -44,7 +48,8 @@ import db.Database;
  * 
  */
 public class Retriever {
-  public static final int MAX_LIMIT = 100;
+  private static final int MAX_LIMIT = 100;
+  private static final String NOT_FOUND = "Best Answer Not Found";
   private Map<Integer, Post> postsMap;
   private PriorityQueue<Post> orderedPosts;
   private final Database connection;
@@ -54,6 +59,15 @@ public class Retriever {
     connection = new Database(dbPath);
   }
 
+  /**
+   * Method that initiates the search functionality
+   * @param indexPath
+   * @param q
+   * @return
+   * @throws IOException
+   * @throws org.apache.lucene.queryparser.classic.ParseException
+   * @throws SQLException
+   */
   private Post search(String indexPath, String[] q) throws IOException,
   org.apache.lucene.queryparser.classic.ParseException, SQLException {
     Path path = FileSystems.getDefault().getPath(indexPath);
@@ -85,7 +99,7 @@ public class Retriever {
     long end = System.currentTimeMillis();
 
     System.out.println("Found " + hits.totalHits + " document(s) (in "
-        + (end - start) + " milliseconds) that matched query '" + queryStr);
+        + (end - start) + " milliseconds) that matched query '" + queryStr + "'");
 
     List<String> ansList = new ArrayList<String>();
 
@@ -104,7 +118,7 @@ public class Retriever {
 
     populateAnswers(ansList, true);
 
-    System.out.println(postsMap);
+    //System.out.println(postsMap);
     computePostRanks();
     Post result = getTopPost();
 
@@ -140,7 +154,7 @@ public class Retriever {
   private void populateAnswers(List<String> ansList, boolean isLocal)
       throws IOException, SQLException {
     if(ansList == null || ansList.size() == 0) {
-      System.out.println("No Answer available!");
+      System.out.println(NOT_FOUND);
       return;
     }
 
@@ -166,7 +180,7 @@ public class Retriever {
       }
 
     } else {
-      List<JSONObject> ansListJSON = JsonParser.getAnswers(ansList);
+      List<JSONObject> ansListJSON = JSONParser.getAnswers(ansList);
       addAnswer(ansListJSON);
     }
   }
@@ -248,15 +262,15 @@ public class Retriever {
    * @param post
    * @return
    */
-  private String retrieveAnswer(Post post) {
-    String bestAnswer = "Best Answer Not Found";
+  private String retrieveAnswer(Post post) {    
     if(post != null) {
       Answer answer = post.getAnswer();
-      if(answer != null) {
-        bestAnswer = answer.getBody();
+      if(answer != null && !answer.getBody().isEmpty()) {
+        String bestAnswer = answer.getBody();
+        return bestAnswer;
       }
     }
-    return bestAnswer;
+    return NOT_FOUND;
   }
 
   /**
@@ -275,7 +289,7 @@ public class Retriever {
     if(bestPost != null) {
       return retrieveAnswer(bestPost);
     }
-    return "Best Answer Not Found";
+    return NOT_FOUND;
   }
 
   public static void main(String[] args) throws Exception {

@@ -1,4 +1,4 @@
-package indexer;
+package ui;
 
 import java.io.IOException;
 

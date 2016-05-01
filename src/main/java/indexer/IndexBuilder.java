@@ -10,6 +10,9 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import stackoverflow.Post;
+import stackoverflow.PostField;
+
 import db.Database;
 
 /**
@@ -18,7 +21,7 @@ import db.Database;
  * @author Narasimman
  * 
  */
-public class Driver {
+public class IndexBuilder {
   private final Indexer indexer;
   private final Database connection;
   private static final String ERR_INVALID_PATH = "Invalid index/db connection path";
@@ -32,7 +35,7 @@ public class Driver {
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  public Driver(String indexPath, String dbPath) throws SQLException,
+  public IndexBuilder(String indexPath, String dbPath) throws SQLException,
   IOException, ClassNotFoundException {
     if (indexPath == null || dbPath == null) {
       throw new IllegalArgumentException(ERR_INVALID_PATH);
@@ -88,7 +91,7 @@ public class Driver {
 
   public static void main(String[] args) throws Exception {
 
-    String usage = "Usage: " + Driver.class.getName()
+    String usage = "Usage: " + IndexBuilder.class.getName()
         + " [-index INDEX_PATH] [-db db_path][-update]\n\n"
         + "This indexes the entries in the sqlite db, creating a Lucene index"
         + "in INDEX_PATH that can be searched with SearchFiles";
@@ -115,7 +118,7 @@ public class Driver {
     String indexPath = cmd.getOptionValue("index");
     String dbPath = cmd.getOptionValue("db");
 
-    Driver driver = new Driver(indexPath, dbPath);
+    IndexBuilder driver = new IndexBuilder(indexPath, dbPath);
     driver.buildIndex();    
   }
 }

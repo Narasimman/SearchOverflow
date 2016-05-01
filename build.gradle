@@ -22,11 +22,11 @@ task indexerjar(type: Jar) {
 
     manifest {
         attributes 'Implementation-Title': 'Search Overflow', 'Implementation-Version': version,
-        'Main-Class': 'indexer.Driver'
+        'Main-Class': 'indexer.IndexBuilder'
     }
 
     baseName = "indexer"
-    mainClassName = 'indexer.Driver'
+    mainClassName = 'indexer.IndexBuilder'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     from fileTree(buildDir).matching{ include 'META-INF/services/*' }
     with jar
@@ -51,7 +51,7 @@ task retrieverjar(type: Jar) {
         'Main-Class': 'indexer.Retriever'
     }
 
-    baseName = "retriver"
+    baseName = "retriever"
     mainClassName = 'indexer.Retriever'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     from fileTree(buildDir).matching{ include 'META-INF/services/*' }

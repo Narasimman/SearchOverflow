@@ -17,7 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JsonParser {
+public class JSONParser {
   private static final String BASE_URL = "https://api.stackexchange.com/2.2/";
 
   private static String readAll(Reader rd) throws IOException {
