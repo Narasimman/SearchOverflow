@@ -82,8 +82,8 @@ public class Retriever {
 
 
     //sort the index based on the score. 
-    Sort sort = new Sort(SortField.FIELD_SCORE, new SortField((PostField.SCORE.toString()), SortField.Type.STRING_VAL, true));    
-    TopDocs hits = indexSearcher.search(query, MAX_LIMIT, sort, true, false);
+    //Sort sort = new Sort(SortField.FIELD_SCORE, new SortField((PostField.SCORE.toString()), SortField.Type.STRING_VAL, true));    
+    TopDocs hits = indexSearcher.search(query, MAX_LIMIT);
 
     long end = System.currentTimeMillis();
 
@@ -100,10 +100,9 @@ public class Retriever {
       String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());
       if (answerId != null) {
         ansList.add(answerId);
-      }
-
-      postsMap.put(Integer.parseInt((doc.get(PostField.ID.toString()))),
-          buildPost(doc, luceneScore));
+        postsMap.put(Integer.parseInt((doc.get(PostField.ID.toString()))),
+            buildPost(doc, luceneScore));
+      }      
     }
 
     populateAnswers(ansList, true);
@@ -143,6 +142,11 @@ public class Retriever {
 
   private void populateAnswers(List<String> ansList, boolean isLocal)
       throws IOException, SQLException {
+    if(ansList == null) {
+      System.out.println("No Answer available!");
+      return;
+    }
+
     if (isLocal) {
       String q = "Select Id, body, score, ParentId from Posts where PostTypeId='2' and Id in (";
       for (String id : ansList) {
