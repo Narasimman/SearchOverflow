@@ -27,8 +27,6 @@ import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -78,7 +76,6 @@ public class Retriever {
     long start = System.currentTimeMillis();
 
 
-    //TopDocs hits = is.search(query, MAX_LIMIT);
     //sort the index based on the score. 
     //Sort sort = new Sort(new SortField((PostField.SCORE.toString()), SortField.Type.INT , true));
     TopDocs hits = indexSearcher.search(query, MAX_LIMIT);
@@ -123,14 +120,14 @@ public class Retriever {
 
     for (Post post : postsMap.values()) {
       double postScore = post.getWeightScore();
-      
-      Answer ans = post.getAnsObj();
-      
+
+      Answer ans = post.getAnswer();
+
       double ansScore = 0.0;
       double userScore = 0.0;
       if(ans != null) {
-        ansScore = post.getAnsObj().getWeightedScore();
-        userScore = post.getAnsObj().getWeightedUserScore();
+        ansScore = post.getAnswer().getWeightedScore();
+        userScore = post.getAnswer().getWeightedUserScore();
       }
 
       double finalScore = postScore + ansScore + userScore;
@@ -191,6 +188,12 @@ public class Retriever {
     }
   }
 
+  /**
+   * build a post given a Lucene document and its associated lucene score
+   * @param doc
+   * @param luceneScore
+   * @return
+   */
   private Post buildPost(Document doc, double luceneScore) {
     int id = 0;
     int acceptedAnsId = 0;
@@ -219,17 +222,50 @@ public class Retriever {
       favCount = Integer.parseInt(doc.get(PostField.FAVORITECOUNT.toString()));
     }
 
-    Post post = new Post.PostBuilder(id).acceptedAnswerId(acceptedAnsId)
-        .score(score).viewCount(viewCount).favoriteCount(favCount)
-        .luceneScore(luceneScore).build();
+    Post post = new Post.PostBuilder(id)
+      .acceptedAnswerId(acceptedAnsId)
+      .score(score)
+      .viewCount(viewCount)
+      .favoriteCount(favCount)
+      .luceneScore(luceneScore)
+      .build();
 
     return post;
   }
 
+  /**
+   * retrieves answer body from the given post
+   * @param post
+   * @return
+   */
+  private String retrieveAnswer(Post post) {
+    String bestAnswer = "";
+    if(post != null) {
+      Answer answer = post.getAnswer();
+      if(answer != null) {
+        bestAnswer = answer.getBody();
+      }
+    }
+    return bestAnswer;
+  }
+
+  /**
+   * Given the path to the index file and a query, returns the best answer
+   * based on our rank algorithm
+   * @param indexPath
+   * @param query
+   * @return
+   * @throws IOException
+   * @throws org.apache.lucene.queryparser.classic.ParseException
+   * @throws SQLException
+   */
   public String retrieve(String indexPath, String query) throws IOException,
   org.apache.lucene.queryparser.classic.ParseException, SQLException {
     Post bestPost = search(indexPath, query.split(" "));
-    return bestPost.getBody();
+    if(bestPost != null) {
+      return retrieveAnswer(bestPost);
+    }
+    return "Best Answer Not Found";
   }
 
   public static void main(String[] args) throws Exception {
@@ -269,7 +305,6 @@ public class Retriever {
     for (String s : query) {
       queryStr += s + " ";
     }
-
     String result = ret.retrieve(indexPath, queryStr);
 
     System.out.println(result);
