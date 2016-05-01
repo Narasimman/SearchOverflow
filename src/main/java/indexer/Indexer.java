@@ -108,9 +108,9 @@ public class Indexer {
     }
 
     if (post.getScore() != 0) {
-      doc.add(new TextField(PostField.VOTES.toString(), String.valueOf(post.getScore()),
+      doc.add(new TextField(PostField.SCORE.toString(), String.valueOf(post.getScore()),
           Field.Store.YES));
-      doc.add(new SortedDocValuesField(PostField.VOTES.toString(), new BytesRef(String.valueOf(post.getScore()))));
+      doc.add(new SortedDocValuesField(PostField.SCORE.toString(), new BytesRef(String.valueOf(post.getScore()))));
     }
 
     if (post.getViewCount() != 0) {
