@@ -63,8 +63,11 @@ public class Retriever {
     IndexSearcher indexSearcher = new IndexSearcher(reader);
 
     Analyzer analyzer = new StandardAnalyzer();
-    MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[] {
-        PostField.TITLE.toString(), PostField.BODY.toString() }, analyzer);
+    MultiFieldQueryParser parser = new MultiFieldQueryParser(
+        new String[] {
+            PostField.TITLE.toString(), 
+            PostField.BODY.toString() 
+        }, analyzer);
 
     String queryStr = "";
     for (String s : q) {
@@ -79,7 +82,7 @@ public class Retriever {
     //sort the index based on the score. 
     //Sort sort = new Sort(new SortField((PostField.SCORE.toString()), SortField.Type.INT , true));
     TopDocs hits = indexSearcher.search(query, MAX_LIMIT);
-    
+
     long end = System.currentTimeMillis();
 
     System.out.println("Found " + hits.totalHits + " document(s) (in "
@@ -165,7 +168,9 @@ public class Retriever {
 
   private void addToPost(int postId, Answer answer) {
     Post parentPost = postsMap.get(postId);
-    parentPost.setAnswer(answer);
+    if(parentPost != null && answer != null) {
+      parentPost.setAnswer(answer);
+    }
   }
 
   private void addAnswer(List<JSONObject> ansList) {
@@ -223,12 +228,12 @@ public class Retriever {
     }
 
     Post post = new Post.PostBuilder(id)
-      .acceptedAnswerId(acceptedAnsId)
-      .score(score)
-      .viewCount(viewCount)
-      .favoriteCount(favCount)
-      .luceneScore(luceneScore)
-      .build();
+    .acceptedAnswerId(acceptedAnsId)
+    .score(score)
+    .viewCount(viewCount)
+    .favoriteCount(favCount)
+    .luceneScore(luceneScore)
+    .build();
 
     return post;
   }
@@ -239,7 +244,7 @@ public class Retriever {
    * @return
    */
   private String retrieveAnswer(Post post) {
-    String bestAnswer = "";
+    String bestAnswer = "Best Answer Not Found";
     if(post != null) {
       Answer answer = post.getAnswer();
       if(answer != null) {
