@@ -7,13 +7,14 @@ import java.nio.file.Path;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.IntField;
+import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 
 /**
  * Indexer class that is build on Lucene
@@ -107,8 +108,9 @@ public class Indexer {
     }
 
     if (post.getScore() != 0) {
-      doc.add(new IntField(PostField.SCORE.toString(), post.getScore(),
+      doc.add(new TextField(PostField.SCORE.toString(), String.valueOf(post.getScore()),
           Field.Store.YES));
+      doc.add(new SortedDocValuesField(PostField.SCORE.toString(), new BytesRef(String.valueOf(post.getScore()))));
     }
 
     if (post.getViewCount() != 0) {

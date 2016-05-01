@@ -82,8 +82,7 @@ public class Retriever {
 
 
     //sort the index based on the score. 
-    Sort sort = new Sort(new SortField((PostField.SCORE.toString()), SortField.Type.INT, true));
-    
+    Sort sort = new Sort(new SortField((PostField.SCORE.toString()), SortField.Type.STRING_VAL, true));    
     TopDocs hits = indexSearcher.search(query, MAX_LIMIT, sort);
 
     long end = System.currentTimeMillis();
