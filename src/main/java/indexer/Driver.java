@@ -33,7 +33,7 @@ public class Driver {
    * @throws ClassNotFoundException
    */
   public Driver(String indexPath, String dbPath) throws SQLException,
-      IOException, ClassNotFoundException {
+  IOException, ClassNotFoundException {
     if (indexPath == null || dbPath == null) {
       throw new IllegalArgumentException(ERR_INVALID_PATH);
     }
@@ -48,7 +48,7 @@ public class Driver {
    * @throws SQLException
    * @throws IOException
    */
-  void buildIndex(ResultSet rs) throws SQLException, IOException {
+  private void build(ResultSet rs) throws SQLException, IOException {
     int counter = 0;
     while (rs.next()) {
       int id = rs.getInt(PostField.ID.toString());
@@ -58,28 +58,32 @@ public class Driver {
       int score = rs.getInt(PostField.SCORE.toString());
       int viewCount = rs.getInt(PostField.VIEWCOUNT.toString());
       int favoriteCount = rs.getInt(PostField.FAVORITECOUNT.toString());
+      int answerCount = rs.getInt(PostField.ANSWERCOUNT.toString());
 
       Post post = new Post.PostBuilder(id).title(title).body(body)
           .acceptedAnswerId(answerId).score(score).viewCount(viewCount)
-          .favoriteCount(favoriteCount).build();
+          .favoriteCount(favoriteCount)
+          .answerCount(answerCount).build();
 
       indexer.index(post);
 
-      // /////TODO:
-
       ++counter;
-      if (counter % 100 == 0) {
+      if (counter % 1000 == 0) {
         System.out.println("Indexed " + counter + " documents!");
       }
-      // ///
     }
 
     connection.close();
     indexer.close();
   }
 
-  public ResultSet executeQuery(String query) throws SQLException {
+  private ResultSet executeQuery(String query) throws SQLException {
     return connection.executeQuery(query);
+  }
+
+  public void buildIndex() throws SQLException, IOException {
+    String query = "Select * from Posts where PostTypeId='1'";
+    build(executeQuery(query));    
   }
 
   public static void main(String[] args) throws Exception {
@@ -112,7 +116,6 @@ public class Driver {
     String dbPath = cmd.getOptionValue("db");
 
     Driver driver = new Driver(indexPath, dbPath);
-    String query = "Select * from Posts where PostTypeId='1'";
-    driver.buildIndex(driver.executeQuery(query));
+    driver.buildIndex();    
   }
 }

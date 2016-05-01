@@ -60,7 +60,10 @@ public class Indexer {
     if (post == null) {
       return false;
     }
-    writer.addDocument(getDocument(post));
+    
+    if(post.getAnswerCount() > 0) {
+      writer.addDocument(getDocument(post));
+    }
     return true;
   }
 
