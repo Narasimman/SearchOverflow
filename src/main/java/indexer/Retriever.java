@@ -80,10 +80,9 @@ public class Retriever {
 
     //TopDocs hits = is.search(query, MAX_LIMIT);
     //sort the index based on the score. 
-    Sort sort = new Sort( new SortField((PostField.SCORE.toString()), SortField.Type.INT , true));
+    Sort sort = new Sort(new SortField((PostField.SCORE.toString()), SortField.Type.INT , true));
     TopDocs hits = indexSearcher.search(query, MAX_LIMIT, sort);
     
-
     long end = System.currentTimeMillis();
 
     System.out.println("Found " + hits.totalHits + " document(s) (in "
@@ -136,7 +135,7 @@ public class Retriever {
   private void populateAnswers(List<String> ansList, boolean isLocal)
       throws IOException, SQLException {
     if (isLocal) {
-      String q = "Select Id, body, score, ParentId from Posts where PostTypeId='2' and Id in (";
+      String q = "Select Id, body, score, ParentId, favoritecount from Posts where PostTypeId='2' and Id in (";
       for (String id : ansList) {
         q += id + ",";
       }
