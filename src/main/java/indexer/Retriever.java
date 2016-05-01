@@ -80,8 +80,8 @@ public class Retriever {
 
     //TopDocs hits = is.search(query, MAX_LIMIT);
     //sort the index based on the score. 
-    Sort sort = new Sort(new SortField((PostField.SCORE.toString()), SortField.Type.INT , true));
-    TopDocs hits = indexSearcher.search(query, MAX_LIMIT, sort);
+    //Sort sort = new Sort(new SortField((PostField.SCORE.toString()), SortField.Type.INT , true));
+    TopDocs hits = indexSearcher.search(query, MAX_LIMIT);
     
     long end = System.currentTimeMillis();
 
@@ -145,7 +145,7 @@ public class Retriever {
       ResultSet rs = connection.executeQuery(q);
 
       while (rs.next()) {
-        int parentId = rs.getInt(PostField.FAVORITECOUNT.toString());
+        int parentId = rs.getInt(PostField.PARENTID.toString());
         int answerId = rs.getInt(PostField.ID.toString());
         int score = rs.getInt(PostField.SCORE.toString());
         String body = rs.getString(PostField.BODY.toString());
@@ -257,7 +257,13 @@ public class Retriever {
     String[] query = cmd.getOptionValues("q");
 
     Retriever ret = new Retriever(dbPath);
-    Post result = ret.search(indexPath, query);
+
+    String queryStr = "";
+    for (String s : query) {
+      queryStr += s + " ";
+    }
+
+    String result = ret.retrieve(indexPath, queryStr);
 
     System.out.println(result);
   }
