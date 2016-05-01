@@ -27,8 +27,6 @@ import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -79,7 +77,6 @@ public class Retriever {
     Query query = parser.parse(queryStr);
 
     long start = System.currentTimeMillis();
-
 
     //sort the index based on the score. 
     //Sort sort = new Sort(SortField.FIELD_SCORE, new SortField((PostField.SCORE.toString()), SortField.Type.STRING_VAL, true));    
@@ -142,7 +139,7 @@ public class Retriever {
 
   private void populateAnswers(List<String> ansList, boolean isLocal)
       throws IOException, SQLException {
-    if(ansList == null) {
+    if(ansList == null || ansList.size() == 0) {
       System.out.println("No Answer available!");
       return;
     }
@@ -154,7 +151,9 @@ public class Retriever {
       }
 
       // #TODO
+      
       q = q.substring(0, q.length() - 1) + ")";
+      System.out.println(q);
       ResultSet rs = connection.executeQuery(q);
 
       while (rs.next()) {

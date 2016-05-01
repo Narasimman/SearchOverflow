@@ -1,22 +1,56 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-  pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+	pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <title>Search Overflow</title>
 </head>
 <body>
-  <div
-    style="margin-top: 200px; text-align: center; margin: auto; width: 80%">
-    <h1>Search Overflow - A Stack Overflow Search Engine</h1>
+	<div class="container text-center">
+		<h1>Search Overflow</h1>
+		<p>A Stack Overflow Search Engine</p>
 
-    <form action="search">
-      <input type="text" name="q" style="width: 50%; height: 40px;" /> <input
-        type="submit" value="search"
-        style="height: 40px; width: 10%; font-size: 1.1em;" />
-    </form>
-    <p>Powered by Narasimman & Manasa</p>
-  </div>
+		<form action="search" name="searchOverflow" class="form-horizontal">
+			<div class="row">
+			  <input type="text" name="q" placeholder="Search here..." class="form-control" />
+			</div> 
+		  
+		  <div style="margin:20px;">
+		    <button type="submit" value="search"	class="btn btn-default"> Search </button>
+		  </div>
+		</form>
+
+		<br>
+
+		<div id="result" style="background-color: #EEE;width: 600px;height: 200px; margin:auto; border-radius:10px;"></div>
+		<div style="position:absolute;bottom:0px;">
+		  <p>Powered by Narasimman & Manasa</p>
+		</div>
+	</div>
+	<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
+
+	<script type="text/javascript">
+	// magic.js
+	$(document).ready(function() {
+	    $('form').submit(function(event) {
+	        var formData = {
+	            'q'              : $('input[name=q]').val(),	            
+	        };
+
+	        $.ajax({
+	            type        : 'GET',
+	            url         : 'search',
+	            data        : formData
+	        }).done(function(data) {
+	                $('#result').html(data); 
+          });
+	        event.preventDefault();
+	    });
+	});
+  
+  </script>
 </body>
 </html>

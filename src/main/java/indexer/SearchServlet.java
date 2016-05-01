@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SearchServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
   private static final String indexPath = "index";
+  private static final String dbPath = "so-dump.db";
 
   /**
    * @see HttpServlet#HttpServlet()
@@ -33,13 +34,17 @@ public class SearchServlet extends HttpServlet {
       String query = request.getParameter("q");
 
       // #TODO
-      Retriever retriever = new Retriever("");
-      String result = retriever.retrieve(indexPath, query);
+      //Retriever retriever = new Retriever(dbPath);
+      //String result = retriever.retrieve(indexPath, query);
 
+      String result = query;
       response.setContentType("text/html; charset=UTF-8");
-
-      request.setAttribute("res", result);
-      request.getRequestDispatcher("/result.jsp").forward(request, response);
+      response.setContentLength(result.length());
+      response.getOutputStream().write(result.getBytes());
+      response.getOutputStream().flush();
+      response.getOutputStream().close();
+      //request.setAttribute("res", result);
+      //request.getRequestDispatcher("/result.jsp").forward(request, response);
     } catch (Exception e) {
       e.printStackTrace();
     }
