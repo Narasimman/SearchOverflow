@@ -8,6 +8,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntField;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -60,7 +61,7 @@ public class Indexer {
     if (post == null) {
       return false;
     }
-    
+
     if(post.getAnswerCount() > 0) {
       writer.addDocument(getDocument(post));
     }
@@ -89,7 +90,7 @@ public class Indexer {
     }
 
     Document doc = new Document();
-    doc.add(new IntField(PostField.ID.toString(), post.getId(), Field.Store.YES));
+    doc.add(new StoredField(PostField.ID.toString(), post.getId()));
 
     if (post.getTitle() != null) {
       doc.add(new TextField(PostField.TITLE.toString(), post.getTitle(),
@@ -102,20 +103,20 @@ public class Indexer {
     }
 
     if (post.getAcceptedAnswerId() != 0) {
-      doc.add(new IntField(PostField.ACCEPTEDANSWERID.toString(), post
-          .getAcceptedAnswerId(), Field.Store.YES));
+      doc.add(new StoredField(PostField.ACCEPTEDANSWERID.toString(), post.getAcceptedAnswerId()));
     }
+
     if (post.getScore() != 0) {
       doc.add(new IntField(PostField.SCORE.toString(), post.getScore(),
           Field.Store.YES));
     }
+
     if (post.getViewCount() != 0) {
-      doc.add(new IntField(PostField.VIEWCOUNT.toString(), post.getViewCount(),
-          Field.Store.YES));
+      doc.add(new StoredField(PostField.VIEWCOUNT.toString(), post.getViewCount()));
     }
+
     if (post.getFavCount() != 0) {
-      doc.add(new IntField(PostField.FAVORITECOUNT.toString(), post
-          .getFavCount(), Field.Store.YES));
+      doc.add(new StoredField(PostField.FAVORITECOUNT.toString(), post.getFavCount()));
     }
     return doc;
   }

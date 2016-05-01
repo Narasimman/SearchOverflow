@@ -27,6 +27,8 @@ import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -80,8 +82,9 @@ public class Retriever {
 
 
     //sort the index based on the score. 
-    //Sort sort = new Sort(new SortField((PostField.SCORE.toString()), SortField.Type.INT , true));
-    TopDocs hits = indexSearcher.search(query, MAX_LIMIT);
+    Sort sort = new Sort(new SortField((PostField.SCORE.toString()), SortField.Type.INT, true));
+    
+    TopDocs hits = indexSearcher.search(query, MAX_LIMIT, sort);
 
     long end = System.currentTimeMillis();
 
