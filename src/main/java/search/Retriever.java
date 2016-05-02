@@ -93,7 +93,6 @@ public class Retriever {
     long start = System.currentTimeMillis();
 
     //sort the index based on the score. 
-    //Sort sort = new Sort(SortField.FIELD_SCORE, new SortField((PostField.SCORE.toString()), SortField.Type.INT, true));
     CustomScoreQuery customQuery = new MyOwnScoreQuery(query);
     TopDocs hits = indexSearcher.search(customQuery, MAX_LIMIT);
 
@@ -119,7 +118,6 @@ public class Retriever {
 
     populateAnswers(ansList, true);
 
-    //System.out.println(postsMap);
     ranker.computePostRanks();
     Post result = ranker.getTopPost();
     System.out.println("BEST Post " + result);

@@ -114,9 +114,7 @@ public class Indexer {
 
     if (post.getScore() != 0) {      
       Field scoreField = new TextField(PostField.SCORE.toString(), String.valueOf(post.getScore()), Field.Store.YES);
-      //scoreField.setBoost(10.0f);
-      doc.add(scoreField);
-      //doc.add(new SortedDocValuesField(PostField.SCORE.toString(), new BytesRef(post.getScore())));
+      doc.add(scoreField);      
     }
 
     if (post.getViewCount() != 0) {
