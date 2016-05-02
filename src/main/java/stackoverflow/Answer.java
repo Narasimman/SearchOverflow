@@ -52,15 +52,18 @@ public class Answer {
 
   @Override
   public String toString() {
-    return "Answer [id=" + id + ", score=" + score + "]";
+    return "Answer [id=" + id + ", score=" + score + ", body=" + body
+        + ", userScore=" + userScore + "]";
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
+    result = prime * result + ((body == null) ? 0 : body.hashCode());
     result = prime * result + id;
     result = prime * result + score;
+    result = prime * result + userScore;
     return result;
   }
 
@@ -76,10 +79,20 @@ public class Answer {
       return false;
     }
     Answer other = (Answer) obj;
+    if (body == null) {
+      if (other.body != null) {
+        return false;
+      }
+    } else if (!body.equals(other.body)) {
+      return false;
+    }
     if (id != other.id) {
       return false;
     }
     if (score != other.score) {
+      return false;
+    }
+    if (userScore != other.userScore) {
       return false;
     }
     return true;

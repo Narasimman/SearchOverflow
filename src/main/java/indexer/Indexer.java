@@ -120,8 +120,8 @@ public class Indexer {
       doc.add(new StoredField(PostField.VIEWCOUNT.toString(), post.getViewCount()));
     }
 
-    if (post.getFavCount() != 0) {
-      doc.add(new StoredField(PostField.FAVORITECOUNT.toString(), post.getFavCount()));
+    if (post.getFavoriteCount() != 0) {
+      doc.add(new StoredField(PostField.FAVORITECOUNT.toString(), post.getFavoriteCount()));
     }
     return doc;
   }

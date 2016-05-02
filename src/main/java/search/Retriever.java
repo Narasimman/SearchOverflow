@@ -47,6 +47,7 @@ import db.Database;
 public class Retriever {
   public static final int MAX_LIMIT = 100;
   private static final String NOT_FOUND = "Best Answer Not Found";
+  private static final String ANSWER_QUERY = "Select ID, BODY, SCORE, PARENTID from Posts where PostTypeId='2' ";
   private Map<Integer, Post> postsMap;
   private final Database connection;
   private Ranker ranker;
@@ -119,7 +120,7 @@ public class Retriever {
     //System.out.println(postsMap);
     ranker.computePostRanks();
     Post result = ranker.getTopPost();
-
+    System.out.println("BEST Post " + result);
     return result;
   }
 
@@ -131,12 +132,10 @@ public class Retriever {
     }
 
     if (isLocal) {
-      String q = "Select Id, body, score, ParentId from Posts where PostTypeId='2' and Id in (";
+      String q = ANSWER_QUERY + " and ID in (";
       for (String id : ansList) {
         q += id + ",";
       }
-
-      // #TODO
 
       q = q.substring(0, q.length() - 1) + ")";
       System.out.println(q);

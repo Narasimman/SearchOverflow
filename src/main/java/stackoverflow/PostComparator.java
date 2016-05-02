@@ -9,6 +9,6 @@ import java.util.Comparator;
  */
 public class PostComparator implements Comparator<Post> {
   public int compare(Post p1, Post p2) {
-    return (p1.getfinalScore() > p2.getfinalScore()) ? 1 : -1;
+    return (p1.getFinalScore() > p2.getFinalScore()) ? 1 : -1;
   }
 }
