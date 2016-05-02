@@ -116,7 +116,7 @@ public class Indexer {
       Field scoreField = new TextField(PostField.SCORE.toString(), String.valueOf(post.getScore()), Field.Store.YES);
       //scoreField.setBoost(10.0f);
       doc.add(scoreField);
-      doc.add(new NumericDocValuesField(PostField.SCORE.toString(), post.getScore()));
+      //doc.add(new SortedDocValuesField(PostField.SCORE.toString(), new BytesRef(post.getScore())));
     }
 
     if (post.getViewCount() != 0) {

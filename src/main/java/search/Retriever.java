@@ -21,12 +21,11 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queries.CustomScoreQuery;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -94,8 +93,9 @@ public class Retriever {
     long start = System.currentTimeMillis();
 
     //sort the index based on the score. 
-    Sort sort = new Sort(SortField.FIELD_SCORE, new SortField((PostField.SCORE.toString()), SortField.Type.STRING_VAL, true));
-    TopDocs hits = indexSearcher.search(query, MAX_LIMIT, sort, true, false);
+    //Sort sort = new Sort(SortField.FIELD_SCORE, new SortField((PostField.SCORE.toString()), SortField.Type.INT, true));
+    CustomScoreQuery customQuery = new MyOwnScoreQuery(query);
+    TopDocs hits = indexSearcher.search(customQuery, 10);
 
     long end = System.currentTimeMillis();
 
