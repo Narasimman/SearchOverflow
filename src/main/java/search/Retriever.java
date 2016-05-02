@@ -95,7 +95,7 @@ public class Retriever {
     //sort the index based on the score. 
     //Sort sort = new Sort(SortField.FIELD_SCORE, new SortField((PostField.SCORE.toString()), SortField.Type.INT, true));
     CustomScoreQuery customQuery = new MyOwnScoreQuery(query);
-    TopDocs hits = indexSearcher.search(customQuery, 10);
+    TopDocs hits = indexSearcher.search(customQuery, MAX_LIMIT);
 
     long end = System.currentTimeMillis();
 
