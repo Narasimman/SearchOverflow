@@ -21,6 +21,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queries.CustomScoreQuery;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -47,6 +48,7 @@ import db.Database;
 public class Retriever {
   public static final int MAX_LIMIT = 100;
   private static final String NOT_FOUND = "Best Answer Not Found";
+  private static final String ANSWER_QUERY = "Select ID, BODY, SCORE, PARENTID from Posts where PostTypeId='2' ";
   private Map<Integer, Post> postsMap;
   private final Database connection;
   private Ranker ranker;
@@ -91,8 +93,8 @@ public class Retriever {
     long start = System.currentTimeMillis();
 
     //sort the index based on the score. 
-    //Sort sort = new Sort(SortField.FIELD_SCORE, new SortField((PostField.SCORE.toString()), SortField.Type.STRING_VAL, true));
-    TopDocs hits = indexSearcher.search(query, MAX_LIMIT);
+    CustomScoreQuery customQuery = new MyOwnScoreQuery(query);
+    TopDocs hits = indexSearcher.search(customQuery, MAX_LIMIT);
 
     long end = System.currentTimeMillis();
 
@@ -105,7 +107,7 @@ public class Retriever {
       ScoreDoc scoreDoc = hits.scoreDocs[i];
       Document doc = indexSearcher.doc(scoreDoc.doc);
       double luceneScore = scoreDoc.score;
-
+      System.out.println(doc.get(PostField.ID.toString()) + " --> " + luceneScore);
       String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());
       if (answerId != null) {
         ansList.add(answerId);
@@ -116,10 +118,9 @@ public class Retriever {
 
     populateAnswers(ansList, true);
 
-    //System.out.println(postsMap);
     ranker.computePostRanks();
     Post result = ranker.getTopPost();
-
+    System.out.println("BEST Post " + result);
     return result;
   }
 
@@ -131,12 +132,10 @@ public class Retriever {
     }
 
     if (isLocal) {
-      String q = "Select Id, body, score, ParentId from Posts where PostTypeId='2' and Id in (";
+      String q = ANSWER_QUERY + " and ID in (";
       for (String id : ansList) {
         q += id + ",";
       }
-
-      // #TODO
 
       q = q.substring(0, q.length() - 1) + ")";
       System.out.println(q);

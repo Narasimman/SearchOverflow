@@ -32,19 +32,23 @@ public class SearchServlet extends HttpServlet {
       throws ServletException, IOException {
     try {
       String query = request.getParameter("q");
+      String res = "";
 
       // #TODO
       //Retriever retriever = new Retriever(dbPath);
       //String result = retriever.retrieve(indexPath, query);
-
       String result = query;
+
+      if(result != null) {
+        res = result;
+      }
+
       response.setContentType("text/html; charset=UTF-8");
-      response.setContentLength(result.length());
-      response.getOutputStream().write(result.getBytes());
+
+      response.setContentLength(res.length());
+      response.getOutputStream().write(res.getBytes());
       response.getOutputStream().flush();
-      response.getOutputStream().close();
-      //request.setAttribute("res", result);
-      //request.getRequestDispatcher("/result.jsp").forward(request, response);
+      response.getOutputStream().close();      
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -58,5 +62,4 @@ public class SearchServlet extends HttpServlet {
       throws ServletException, IOException {
     doGet(request, response);
   }
-
 }
