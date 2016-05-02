@@ -120,7 +120,7 @@ public class Retriever {
 
     ranker.computePostRanks();
     Post result = ranker.getTopPost();
-    System.out.println("BEST Post " + result);
+  //  System.out.println("BEST Post " + result);
     return result;
   }
 
@@ -138,7 +138,7 @@ public class Retriever {
       }
 
       q = q.substring(0, q.length() - 1) + ")";
-      System.out.println(q);
+     // System.out.println(q);
       ResultSet rs = connection.executeQuery(q);
 
       while (rs.next()) {
@@ -301,6 +301,6 @@ public class Retriever {
     }
     String result = ret.retrieve(indexPath, queryStr);
 
-    System.out.println(result);
+    //System.out.println(result);
   }
 }
