@@ -8,6 +8,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntField;
+import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
@@ -113,9 +114,9 @@ public class Indexer {
 
     if (post.getScore() != 0) {      
       Field scoreField = new TextField(PostField.SCORE.toString(), String.valueOf(post.getScore()), Field.Store.YES);
-      scoreField.setBoost(10.0f);
+      //scoreField.setBoost(10.0f);
       doc.add(scoreField);
-      //doc.add(new SortedDocValuesField(PostField.SCORE.toString(), new BytesRef(String.valueOf(post.getScore()))));
+      doc.add(new NumericDocValuesField(PostField.SCORE.toString(), post.getScore()));
     }
 
     if (post.getViewCount() != 0) {
