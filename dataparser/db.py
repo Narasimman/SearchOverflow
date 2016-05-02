@@ -31,7 +31,7 @@ schema = {
 
 
 def dump_files(file_names, anathomy,
-  dump_path='/home/ns3184/searchoverflow/dataparser',
+  dump_path,
   dump_database_name='full_so_dump.db',
   create_query='CREATE TABLE IF NOT EXISTS {table} ({fields})',
   insert_query='INSERT INTO {table} ({columns}) VALUES ({values})', log_filename='so-parser.log'):
@@ -78,4 +78,6 @@ def dump_files(file_names, anathomy,
       del (tree)
 
 if __name__ == '__main__':
-    dump_files(["Posts"], schema)
+    dump_path= raw_input("Input the directory of the Posts.xml File: ")
+    print dump_path;
+    dump_files(["Posts"], schema, dump_path)
