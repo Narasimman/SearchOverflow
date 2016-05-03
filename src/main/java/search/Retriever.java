@@ -245,7 +245,7 @@ public class Retriever {
       Answer answer = post.getAnswer();
       if(answer != null && !answer.getBody().isEmpty()) {
         String bestAnswer = answer.getBody();
-        System.out.println("best answer is " + bestAnswer);
+       // System.out.println("best answer is " + bestAnswer);
 //        
 //        String title = StringUtils.substringBetween(testHtml, "<title>", "</title>");
 //		System.out.println("title:" + title); 
@@ -326,6 +326,6 @@ public class Retriever {
     }
     String result = ret.retrieve(indexPath, queryStr);
 
-    System.out.println(result);
+   // System.out.println(result);
   }
 }
