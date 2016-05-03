@@ -24,7 +24,10 @@
 
 		<br>
 
-		<div id="result" style="background-color: #EEE;width: 600px;height: 200px; margin:auto; border-radius:10px;"></div>
+		<div id="result" style="background-color: #EEE;width: 600px;height: 200px; margin:auto; border-radius:10px;">
+		<div id="loading" style="display:none"><img src="loading.gif" /></div>
+		
+		</div>
 		<div style="position:absolute;bottom:0px;">
 		  <p>Powered by Narasimman & Manasa</p>
 		</div>
@@ -35,6 +38,16 @@
 	<script type="text/javascript">
 	// magic.js
 	$(document).ready(function() {
+		  var loading = $("#loading");
+      $(document).ajaxStart(function () {
+            loading.show();
+      });
+
+      $(document).ajaxStop(function () {
+            //loading.hide();
+      });
+		
+		
 	    $('form').submit(function(event) {
 	        var formData = {
 	            'q'  : $('input[name=q]').val(),	            
