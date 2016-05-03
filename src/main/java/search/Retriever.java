@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -237,7 +239,18 @@ public class Retriever {
       Answer answer = post.getAnswer();
       if(answer != null && !answer.getBody().isEmpty()) {
         String bestAnswer = answer.getBody();
+        System.out.println("best answer is " + bestAnswer);
+        
+        final Pattern pattern = Pattern.compile("<pre>(.+?)</pre>");
+        final Matcher matcher = pattern.matcher(bestAnswer);
+        System.out.println("Match found? " + matcher.find());
+        if (matcher.find()){
+        	System.out.println(matcher.group(1));
+        }
+        
+        
         return bestAnswer;
+        //check for the precode and return only the code snippet --- todo
       }
     }
     return NOT_FOUND;
