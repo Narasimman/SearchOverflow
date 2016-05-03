@@ -101,9 +101,10 @@ public class Retriever {
     TopDocs hits = indexSearcher.search(customQuery, MAX_LIMIT);
 
     long end = System.currentTimeMillis();
-
-    System.out.println("Found " + hits.totalHits + " document(s) (in "
-        + (end - start) + " milliseconds) that matched query '" + queryStr + "'");
+    
+    String queryTime = "Found " + hits.totalHits + " document(s) (in "
+        + (end - start) + " milliseconds) that matched query '" + queryStr + "' \n\n<br><br>";
+    System.out.println(queryTime);
 
     List<String> ansList = new ArrayList<String>();
 
@@ -126,8 +127,11 @@ public class Retriever {
     Post post = ranker.getTopPost();
     String result = null;
     if(post != null) {
+
     	result = retrieveAnswer(post);
     	//return retrieveAnswer(post);
+
+      return result;
     }
      System.out.println("BEST Post " + result);
     return result;
