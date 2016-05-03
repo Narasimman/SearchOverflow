@@ -243,6 +243,7 @@ public class Retriever {
         
         final Pattern pattern = Pattern.compile("<pre>(.+?)</pre>");
         final Matcher matcher = pattern.matcher(bestAnswer);
+        System.out.println("Match found? " + matcher.find());
         if (matcher.find()){
         	System.out.println(matcher.group(1));
         }
