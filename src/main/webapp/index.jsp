@@ -37,7 +37,7 @@
 	$(document).ready(function() {
 	    $('form').submit(function(event) {
 	        var formData = {
-	            'q'              : $('input[name=q]').val(),	            
+	            'q'  : $('input[name=q]').val(),	            
 	        };
 
 	        $.ajax({

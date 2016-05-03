@@ -16,6 +16,7 @@ import search.Retriever;
 @WebServlet("/search")
 public class SearchServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
+  private static final String NOT_FOUND = "Best Answer Not Found";
   private static final String indexPath = "/data/ns3184/index";
   private static final String dbPath = "/data/ns3184/full_so_dump.db";
 
@@ -34,7 +35,7 @@ public class SearchServlet extends HttpServlet {
       throws ServletException, IOException {
     try {
       String query = request.getParameter("q");
-      String res = "";
+      String res = NOT_FOUND;
 
       Retriever retriever = new Retriever(dbPath);
       String result = retriever.retrieve(indexPath, query);
