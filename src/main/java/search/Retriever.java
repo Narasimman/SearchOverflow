@@ -253,6 +253,7 @@ public class Retriever {
         Element link = doc.select("pre").first();
 
         String text = doc.body().text(); 
+        System.out.println("text is" + text);
 //        final Pattern pattern = Pattern.compile("<p>(.+?)</p>");
 //        final Matcher matcher = pattern.matcher(bestAnswer);
 //        System.out.println("Match found? " + matcher.find());
