@@ -50,7 +50,7 @@ import db.Database;
  * 
  */
 public class Retriever {
-  public static final int MAX_LIMIT = 100;
+  public static final int MAX_LIMIT = 25;
   private static final String NOT_FOUND = "Best Answer Not Found";
   private static final String ANSWER_QUERY = "Select ID, BODY, SCORE, PARENTID from Posts where PostTypeId='2' ";
   private Map<Integer, Post> postsMap;
@@ -72,7 +72,7 @@ public class Retriever {
    * @throws org.apache.lucene.queryparser.classic.ParseException
    * @throws SQLException
    */
-  private Post search(String indexPath, String[] q) throws IOException,
+  private String search(String indexPath, String[] q) throws IOException,
   org.apache.lucene.queryparser.classic.ParseException, SQLException {
     Path path = FileSystems.getDefault().getPath(indexPath);
     Directory dir = FSDirectory.open(path);
@@ -97,7 +97,7 @@ public class Retriever {
     long start = System.currentTimeMillis();
 
     //sort the index based on the score. 
-    CustomScoreQuery customQuery = new MyOwnScoreQuery(query);
+    CustomScoreQuery customQuery = new SOCustomScoreQuery(query);
     TopDocs hits = indexSearcher.search(customQuery, MAX_LIMIT);
 
     long end = System.currentTimeMillis();
@@ -123,8 +123,12 @@ public class Retriever {
     populateAnswers(ansList, true);
 
     ranker.computePostRanks();
-    Post result = ranker.getTopPost();
-  //  System.out.println("BEST Post " + result);
+    Post post = ranker.getTopPost();
+    String result = null;
+    if(post != null) {
+      return retrieveAnswer(post);
+    }
+    //  System.out.println("BEST Post " + result);
     return result;
   }
 
@@ -142,7 +146,7 @@ public class Retriever {
       }
 
       q = q.substring(0, q.length() - 1) + ")";
-     // System.out.println(q);
+      // System.out.println(q);
       ResultSet rs = connection.executeQuery(q);
 
       while (rs.next()) {
@@ -256,7 +260,6 @@ public class Retriever {
 //        	System.out.println(matcher.group(1));
 //        }
 //        
-        
         return bestAnswer;
         //check for the precode and return only the code snippet --- todo
       }
@@ -276,9 +279,9 @@ public class Retriever {
    */
   public String retrieve(String indexPath, String query) throws IOException,
   org.apache.lucene.queryparser.classic.ParseException, SQLException {
-    Post bestPost = search(indexPath, query.split(" "));
-    if(bestPost != null) {
-      return retrieveAnswer(bestPost);
+    String bestAnswer = search(indexPath, query.split(" "));
+    if(bestAnswer != null) {
+      return bestAnswer;
     }
     return NOT_FOUND;
   }
@@ -322,6 +325,6 @@ public class Retriever {
     }
     String result = ret.retrieve(indexPath, queryStr);
 
-    //System.out.println(result);
+    System.out.println(result);
   }
 }
