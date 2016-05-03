@@ -237,7 +237,12 @@ public class Retriever {
       Answer answer = post.getAnswer();
       if(answer != null && !answer.getBody().isEmpty()) {
         String bestAnswer = answer.getBody();
+        System.out.println("best answer is " + bestAnswer);
+        
+        
+        
         return bestAnswer;
+        //check for the precode and return only the code snippet --- todo
       }
     }
     return NOT_FOUND;
