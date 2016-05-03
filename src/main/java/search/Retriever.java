@@ -314,6 +314,6 @@ public class Retriever {
     }
     String result = ret.retrieve(indexPath, queryStr);
 
-    //System.out.println(result);
+    System.out.println(result);
   }
 }
