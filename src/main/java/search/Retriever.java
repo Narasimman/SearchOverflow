@@ -126,9 +126,10 @@ public class Retriever {
     Post post = ranker.getTopPost();
     String result = null;
     if(post != null) {
-      return retrieveAnswer(post);
+    	result = retrieveAnswer(post);
+    	//return retrieveAnswer(post);
     }
-    //  System.out.println("BEST Post " + result);
+     System.out.println("BEST Post " + result);
     return result;
   }
 
@@ -246,22 +247,17 @@ public class Retriever {
       if(answer != null && !answer.getBody().isEmpty()) {
         String bestAnswer = answer.getBody();
        // System.out.println("best answer is " + bestAnswer);
-//        
-//        String title = StringUtils.substringBetween(testHtml, "<title>", "</title>");
-//		System.out.println("title:" + title); 
+
         org.jsoup.nodes.Document doc = Jsoup.parse(bestAnswer);
         Element link = doc.select("pre").first();
+        String codeText = doc.body().text();
 
-        String text = doc.body().text(); 
-        System.out.println("text is" + text);
-//        final Pattern pattern = Pattern.compile("<p>(.+?)</p>");
-//        final Matcher matcher = pattern.matcher(bestAnswer);
-//        System.out.println("Match found? " + matcher.find());
-//        if (matcher.find()){
-//        	System.out.println(matcher.group(1));
-//        }
-//        
-        return bestAnswer;
+        if (codeText !=null){
+        	return codeText;
+        } else {
+        	return bestAnswer;
+        }
+       
         //check for the precode and return only the code snippet --- todo
       }
     }
