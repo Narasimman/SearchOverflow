@@ -127,11 +127,7 @@ public class Retriever {
     Post post = ranker.getTopPost();
     String result = null;
     if(post != null) {
-    	System.out.println("inside null");
     	result = retrieveAnswer(post);
-    	//return retrieveAnswer(post);
-
-      return result;
     }
      System.out.println("BEST Post " + result);
     return result;
@@ -255,7 +251,7 @@ public class Retriever {
         org.jsoup.nodes.Document doc = Jsoup.parse(bestAnswer);
         Element link = doc.select("pre").first();
         String codeText = doc.body().text();
-        System.out.println("code text " + codeText);
+     //   System.out.println("code text " + codeText);
        
         
         if (codeText !=null){
