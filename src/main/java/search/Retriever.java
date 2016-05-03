@@ -127,7 +127,7 @@ public class Retriever {
     Post post = ranker.getTopPost();
     String result = null;
     if(post != null) {
-
+    	System.out.println("inside null");
     	result = retrieveAnswer(post);
     	//return retrieveAnswer(post);
 
@@ -256,9 +256,13 @@ public class Retriever {
         Element link = doc.select("pre").first();
         String codeText = doc.body().text();
         System.out.println("code text " + codeText);
+       
+        
         if (codeText !=null){
+        	System.out.println("code text " + codeText);
         	return codeText;
         } else {
+        	System.out.println("bestanswer " + bestAnswer);
         	return bestAnswer;
         }
        
