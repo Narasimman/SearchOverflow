@@ -33,6 +33,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 
 import parser.JSONParser;
 import stackoverflow.Answer;
@@ -246,16 +248,22 @@ public class Retriever {
       Answer answer = post.getAnswer();
       if(answer != null && !answer.getBody().isEmpty()) {
         String bestAnswer = answer.getBody();
-        System.out.println("best answer is " + bestAnswer);
+       // System.out.println("best answer is " + bestAnswer);
+//        
+//        String title = StringUtils.substringBetween(testHtml, "<title>", "</title>");
+//		System.out.println("title:" + title); 
+        org.jsoup.nodes.Document doc = Jsoup.parse(bestAnswer);
+        Element link = doc.select("pre").first();
 
-        final Pattern pattern = Pattern.compile("<pre>(.+?)</pre>");
-        final Matcher matcher = pattern.matcher(bestAnswer);
-        System.out.println("Match found? " + matcher.find());
-        if (matcher.find()){
-          System.out.println(matcher.group(1));
-        }
-
-
+        String text = doc.body().text(); 
+        System.out.println("text is" + text);
+//        final Pattern pattern = Pattern.compile("<p>(.+?)</p>");
+//        final Matcher matcher = pattern.matcher(bestAnswer);
+//        System.out.println("Match found? " + matcher.find());
+//        if (matcher.find()){
+//        	System.out.println(matcher.group(1));
+//        }
+//        
         return bestAnswer;
         //check for the precode and return only the code snippet --- todo
       }
@@ -321,6 +329,6 @@ public class Retriever {
     }
     String result = ret.retrieve(indexPath, queryStr);
 
-    System.out.println(result);
+   // System.out.println(result);
   }
 }
