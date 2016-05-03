@@ -104,7 +104,7 @@ public class Retriever {
     
     String queryTime = "Found " + hits.totalHits + " document(s) (in "
         + (end - start) + " milliseconds) that matched query '" + queryStr + "' \n\n<br><br>";
-    System.out.println(queryTime);
+   // System.out.println(queryTime);
 
     List<String> ansList = new ArrayList<String>();
 
@@ -112,7 +112,7 @@ public class Retriever {
       ScoreDoc scoreDoc = hits.scoreDocs[i];
       Document doc = indexSearcher.doc(scoreDoc.doc);
       double luceneScore = scoreDoc.score;
-      System.out.println(doc.get(PostField.ID.toString()) + " --> " + luceneScore);
+     // System.out.println(doc.get(PostField.ID.toString()) + " --> " + luceneScore);
       String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());
       if (answerId != null) {
         ansList.add(answerId);
@@ -255,10 +255,10 @@ public class Retriever {
        
         
         if (codeText !=null){
-        	System.out.println("code text " + codeText);
+        	//System.out.println("code text " + codeText);
         	return codeText;
         } else {
-        	System.out.println("bestanswer " + bestAnswer);
+        	//System.out.println("bestanswer " + bestAnswer);
         	return bestAnswer;
         }
        
