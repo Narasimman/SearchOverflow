@@ -255,7 +255,7 @@ public class Retriever {
         org.jsoup.nodes.Document doc = Jsoup.parse(bestAnswer);
         Element link = doc.select("pre").first();
         String codeText = doc.body().text();
-
+        System.out.println("code text " + codeText);
         if (codeText !=null){
         	return codeText;
         } else {
