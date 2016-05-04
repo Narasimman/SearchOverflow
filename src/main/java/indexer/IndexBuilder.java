@@ -36,7 +36,7 @@ public class IndexBuilder {
    * @throws ClassNotFoundException
    */
   public IndexBuilder(String indexPath, String dbPath) throws SQLException,
-  IOException, ClassNotFoundException {
+      IOException, ClassNotFoundException {
     if (indexPath == null || dbPath == null) {
       throw new IllegalArgumentException(ERR_INVALID_PATH);
     }
@@ -65,8 +65,7 @@ public class IndexBuilder {
 
       Post post = new Post.PostBuilder(id).title(title).body(body)
           .acceptedAnswerId(answerId).score(score).viewCount(viewCount)
-          .favoriteCount(favoriteCount)
-          .answerCount(answerCount).build();
+          .favoriteCount(favoriteCount).answerCount(answerCount).build();
 
       indexer.index(post);
 
@@ -86,7 +85,7 @@ public class IndexBuilder {
 
   public void buildIndex() throws SQLException, IOException {
     String query = "Select * from Posts where PostTypeId='1'";
-    build(executeQuery(query));    
+    build(executeQuery(query));
   }
 
   public static void main(String[] args) throws Exception {
@@ -119,6 +118,6 @@ public class IndexBuilder {
     String dbPath = cmd.getOptionValue("db");
 
     IndexBuilder driver = new IndexBuilder(indexPath, dbPath);
-    driver.buildIndex();    
+    driver.buildIndex();
   }
 }

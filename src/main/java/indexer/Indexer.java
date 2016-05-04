@@ -68,7 +68,7 @@ public class Indexer {
       return false;
     }
 
-    if(post.getAnswerCount() > 0) {
+    if (post.getAnswerCount() > 0) {
       writer.addDocument(getDocument(post));
     }
     return true;
@@ -109,20 +109,24 @@ public class Indexer {
     }
 
     if (post.getAcceptedAnswerId() != 0) {
-      doc.add(new StoredField(PostField.ACCEPTEDANSWERID.toString(), post.getAcceptedAnswerId()));
+      doc.add(new StoredField(PostField.ACCEPTEDANSWERID.toString(), post
+          .getAcceptedAnswerId()));
     }
 
-    if (post.getScore() != 0) {      
-      Field scoreField = new TextField(PostField.SCORE.toString(), String.valueOf(post.getScore()), Field.Store.YES);
-      doc.add(scoreField);      
+    if (post.getScore() != 0) {
+      Field scoreField = new TextField(PostField.SCORE.toString(),
+          String.valueOf(post.getScore()), Field.Store.YES);
+      doc.add(scoreField);
     }
 
     if (post.getViewCount() != 0) {
-      doc.add(new StoredField(PostField.VIEWCOUNT.toString(), post.getViewCount()));
+      doc.add(new StoredField(PostField.VIEWCOUNT.toString(), post
+          .getViewCount()));
     }
 
     if (post.getFavoriteCount() != 0) {
-      doc.add(new StoredField(PostField.FAVORITECOUNT.toString(), post.getFavoriteCount()));
+      doc.add(new StoredField(PostField.FAVORITECOUNT.toString(), post
+          .getFavoriteCount()));
     }
     return doc;
   }

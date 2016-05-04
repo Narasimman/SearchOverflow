@@ -63,6 +63,7 @@ public class Retriever {
 
   /**
    * Method that initiates the search functionality
+   * 
    * @param indexPath
    * @param q
    * @return
@@ -71,7 +72,7 @@ public class Retriever {
    * @throws SQLException
    */
   private String search(String indexPath, String[] q) throws IOException,
-  org.apache.lucene.queryparser.classic.ParseException, SQLException {
+      org.apache.lucene.queryparser.classic.ParseException, SQLException {
     Path path = FileSystems.getDefault().getPath(indexPath);
     Directory dir = FSDirectory.open(path);
 
@@ -79,11 +80,8 @@ public class Retriever {
     IndexSearcher indexSearcher = new IndexSearcher(reader);
 
     Analyzer analyzer = new StandardAnalyzer();
-    MultiFieldQueryParser parser = new MultiFieldQueryParser(
-        new String[] {
-            PostField.TITLE.toString(), 
-            PostField.BODY.toString() 
-        }, analyzer);
+    MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[] {
+        PostField.TITLE.toString(), PostField.BODY.toString() }, analyzer);
 
     String queryStr = "";
     for (String s : q) {
@@ -94,14 +92,15 @@ public class Retriever {
 
     long start = System.currentTimeMillis();
 
-    //sort the index based on the score. 
+    // sort the index based on the score.
     CustomScoreQuery customQuery = new SOCustomScoreQuery(query);
     TopDocs hits = indexSearcher.search(customQuery, MAX_LIMIT);
 
     long end = System.currentTimeMillis();
 
     String queryTime = "Found " + hits.totalHits + " document(s) (in "
-        + (end - start) + " milliseconds) that matched query '" + queryStr + "' \n\n<br><br>";
+        + (end - start) + " milliseconds) that matched query '" + queryStr
+        + "' \n\n<br><br>";
     // System.out.println(queryTime);
 
     List<String> ansList = new ArrayList<String>();
@@ -110,13 +109,14 @@ public class Retriever {
       ScoreDoc scoreDoc = hits.scoreDocs[i];
       Document doc = indexSearcher.doc(scoreDoc.doc);
       double luceneScore = scoreDoc.score;
-      // System.out.println(doc.get(PostField.ID.toString()) + " --> " + luceneScore);
+      // System.out.println(doc.get(PostField.ID.toString()) + " --> " +
+      // luceneScore);
       String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());
       if (answerId != null) {
         ansList.add(answerId);
         postsMap.put(Integer.parseInt((doc.get(PostField.ID.toString()))),
             buildPost(doc, luceneScore));
-      }      
+      }
     }
 
     populateAnswers(ansList, true);
@@ -125,8 +125,8 @@ public class Retriever {
     Post post = ranker.getTopPost();
     String result = null;
 
-    if(post != null) {
-      result += queryStr;
+    if (post != null) {
+      result += queryTime;
       result += retrieveAnswer(post);
     }
     System.out.println("BEST Post :" + result);
@@ -135,7 +135,7 @@ public class Retriever {
 
   private void populateAnswers(List<String> ansList, boolean isLocal)
       throws IOException, SQLException {
-    if(ansList == null || ansList.size() == 0) {
+    if (ansList == null || ansList.size() == 0) {
       System.out.println(NOT_FOUND);
       return;
     }
@@ -167,7 +167,7 @@ public class Retriever {
 
   private void addToPost(int postId, Answer answer) {
     Post parentPost = postsMap.get(postId);
-    if(parentPost != null && answer != null) {
+    if (parentPost != null && answer != null) {
       parentPost.setAnswer(answer);
     }
   }
@@ -193,6 +193,7 @@ public class Retriever {
 
   /**
    * build a post given a Lucene document and its associated lucene score
+   * 
    * @param doc
    * @param luceneScore
    * @return
@@ -225,52 +226,49 @@ public class Retriever {
       favCount = Integer.parseInt(doc.get(PostField.FAVORITECOUNT.toString()));
     }
 
-    Post post = new Post.PostBuilder(id)
-    .acceptedAnswerId(acceptedAnsId)
-    .score(score)
-    .viewCount(viewCount)
-    .favoriteCount(favCount)
-    .luceneScore(luceneScore)
-    .build();
+    Post post = new Post.PostBuilder(id).acceptedAnswerId(acceptedAnsId)
+        .score(score).viewCount(viewCount).favoriteCount(favCount)
+        .luceneScore(luceneScore).build();
 
     return post;
   }
 
   /**
    * retrieves answer body from the given post
+   * 
    * @param post
    * @return
    */
-  private String retrieveAnswer(Post post) {    
-    if(post != null) {
+  private String retrieveAnswer(Post post) {
+    if (post != null) {
       Answer answer = post.getAnswer();
-      if(answer != null && !answer.getBody().isEmpty()) {
+      if (answer != null && !answer.getBody().isEmpty()) {
         String bestAnswer = answer.getBody();
         // System.out.println("best answer is " + bestAnswer);
 
         org.jsoup.nodes.Document doc = Jsoup.parse(bestAnswer);
         Element link = doc.select("pre").first();
         String codeText = doc.body().text();
-        //   System.out.println("code text " + codeText);
+        // System.out.println("code text " + codeText);
 
-
-        if (codeText !=null){
-          //System.out.println("code text " + codeText);
+        if (codeText != null) {
+          // System.out.println("code text " + codeText);
           return codeText;
         } else {
-          //System.out.println("bestanswer " + bestAnswer);
+          // System.out.println("bestanswer " + bestAnswer);
           return bestAnswer;
         }
 
-        //check for the precode and return only the code snippet --- todo
+        // check for the precode and return only the code snippet --- todo
       }
     }
     return NOT_FOUND;
   }
 
   /**
-   * Given the path to the index file and a query, returns the best answer
-   * based on our rank algorithm
+   * Given the path to the index file and a query, returns the best answer based
+   * on our rank algorithm
+   * 
    * @param indexPath
    * @param query
    * @return
@@ -279,9 +277,9 @@ public class Retriever {
    * @throws SQLException
    */
   public String retrieve(String indexPath, String query) throws IOException,
-  org.apache.lucene.queryparser.classic.ParseException, SQLException {
+      org.apache.lucene.queryparser.classic.ParseException, SQLException {
     String bestAnswer = search(indexPath, query.split(" "));
-    if(bestAnswer != null) {
+    if (bestAnswer != null) {
       return bestAnswer;
     }
     return NOT_FOUND;

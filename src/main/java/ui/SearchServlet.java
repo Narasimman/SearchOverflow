@@ -39,9 +39,9 @@ public class SearchServlet extends HttpServlet {
 
       Retriever retriever = new Retriever(dbPath);
       String result = retriever.retrieve(indexPath, query);
-      //String result = query;
+      // String result = query;
 
-      if(result != null) {
+      if (result != null) {
         res = result;
       }
 
@@ -50,7 +50,7 @@ public class SearchServlet extends HttpServlet {
       response.setContentLength(res.length());
       response.getOutputStream().write(res.getBytes());
       response.getOutputStream().flush();
-      response.getOutputStream().close();      
+      response.getOutputStream().close();
     } catch (Exception e) {
       e.printStackTrace();
     }
