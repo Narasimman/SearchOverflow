@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -101,10 +99,10 @@ public class Retriever {
     TopDocs hits = indexSearcher.search(customQuery, MAX_LIMIT);
 
     long end = System.currentTimeMillis();
-    
+
     String queryTime = "Found " + hits.totalHits + " document(s) (in "
         + (end - start) + " milliseconds) that matched query '" + queryStr + "' \n\n<br><br>";
-   // System.out.println(queryTime);
+    // System.out.println(queryTime);
 
     List<String> ansList = new ArrayList<String>();
 
@@ -112,7 +110,7 @@ public class Retriever {
       ScoreDoc scoreDoc = hits.scoreDocs[i];
       Document doc = indexSearcher.doc(scoreDoc.doc);
       double luceneScore = scoreDoc.score;
-     // System.out.println(doc.get(PostField.ID.toString()) + " --> " + luceneScore);
+      // System.out.println(doc.get(PostField.ID.toString()) + " --> " + luceneScore);
       String answerId = doc.get(PostField.ACCEPTEDANSWERID.toString());
       if (answerId != null) {
         ansList.add(answerId);
@@ -126,10 +124,12 @@ public class Retriever {
     ranker.computePostRanks();
     Post post = ranker.getTopPost();
     String result = null;
+
     if(post != null) {
-    	result = retrieveAnswer(post);
+      result += queryStr;
+      result += retrieveAnswer(post);
     }
-     System.out.println("BEST Post " + result);
+    System.out.println("BEST Post :" + result);
     return result;
   }
 
@@ -246,22 +246,22 @@ public class Retriever {
       Answer answer = post.getAnswer();
       if(answer != null && !answer.getBody().isEmpty()) {
         String bestAnswer = answer.getBody();
-       // System.out.println("best answer is " + bestAnswer);
+        // System.out.println("best answer is " + bestAnswer);
 
         org.jsoup.nodes.Document doc = Jsoup.parse(bestAnswer);
         Element link = doc.select("pre").first();
         String codeText = doc.body().text();
-     //   System.out.println("code text " + codeText);
-       
-        
+        //   System.out.println("code text " + codeText);
+
+
         if (codeText !=null){
-        	//System.out.println("code text " + codeText);
-        	return codeText;
+          //System.out.println("code text " + codeText);
+          return codeText;
         } else {
-        	//System.out.println("bestanswer " + bestAnswer);
-        	return bestAnswer;
+          //System.out.println("bestanswer " + bestAnswer);
+          return bestAnswer;
         }
-       
+
         //check for the precode and return only the code snippet --- todo
       }
     }
@@ -326,6 +326,6 @@ public class Retriever {
     }
     String result = ret.retrieve(indexPath, queryStr);
 
-   // System.out.println(result);
+    // System.out.println(result);
   }
 }
