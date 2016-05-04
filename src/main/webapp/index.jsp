@@ -24,8 +24,10 @@
 
 		<br>
 
-		<div id="result" style="background-color: #EEE;width: 600px;height: 200px; margin:auto; border-radius:10px;">
-		<div id="loading" style="display:none"><img src="loading.gif" /></div>
+		<div id="result" style="background-color: #EEE;width: 600px;min-height: 200px; margin:auto; border-radius:10px;">
+		  <div id="loading" style="display:none">
+		    <img src="loading.gif" />
+		  </div>
 		
 		</div>
 		<div style="position:absolute;bottom:0px;">
@@ -36,7 +38,6 @@
 		src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
 
 	<script type="text/javascript">
-	// magic.js
 	$(document).ready(function() {
 		  var loading = $("#loading");
       $(document).ajaxStart(function () {
@@ -49,6 +50,8 @@
 		
 		
 	    $('form').submit(function(event) {
+	     $('#result').html("<div id='loading' style='display:none'><img src='loading.gif' /></div>");
+	    
 	        var formData = {
 	            'q'  : $('input[name=q]').val(),	            
 	        };

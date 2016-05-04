@@ -126,6 +126,7 @@ public class Retriever {
     String result = null;
 
     if (post != null) {
+      result = "";
       result += queryTime;
       result += retrieveAnswer(post);
     }
