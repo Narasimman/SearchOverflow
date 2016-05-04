@@ -39,13 +39,13 @@
 
 	<script type="text/javascript">
 	$(document).ready(function() {
-		  var loading = $("#loading");
+		  
       $(document).ajaxStart(function () {
-            loading.show();
+    	  $("#loading").show();
       });
 
       $(document).ajaxStop(function () {
-            loading.hide();
+    	  $("#loading").hide();
       });
 		
 		
