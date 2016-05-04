@@ -72,7 +72,7 @@ public class Retriever {
    * @throws SQLException
    */
   private String search(String indexPath, String[] q) throws IOException,
-      org.apache.lucene.queryparser.classic.ParseException, SQLException {
+  org.apache.lucene.queryparser.classic.ParseException, SQLException {
     Path path = FileSystems.getDefault().getPath(indexPath);
     Directory dir = FSDirectory.open(path);
 
@@ -245,22 +245,10 @@ public class Retriever {
       Answer answer = post.getAnswer();
       if (answer != null && !answer.getBody().isEmpty()) {
         String bestAnswer = answer.getBody();
-        // System.out.println("best answer is " + bestAnswer);
 
-        org.jsoup.nodes.Document doc = Jsoup.parse(bestAnswer);
-        Element link = doc.select("pre").first();
-        String codeText = doc.body().text();
-        // System.out.println("code text " + codeText);
-
-        if (codeText != null) {
-          // System.out.println("code text " + codeText);
-          return codeText;
-        } else {
-          // System.out.println("bestanswer " + bestAnswer);
+        if (bestAnswer != null){
           return bestAnswer;
         }
-
-        // check for the precode and return only the code snippet --- todo
       }
     }
     return NOT_FOUND;
@@ -278,7 +266,7 @@ public class Retriever {
    * @throws SQLException
    */
   public String retrieve(String indexPath, String query) throws IOException,
-      org.apache.lucene.queryparser.classic.ParseException, SQLException {
+  org.apache.lucene.queryparser.classic.ParseException, SQLException {
     String bestAnswer = search(indexPath, query.split(" "));
     if (bestAnswer != null) {
       return bestAnswer;
