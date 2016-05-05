@@ -2,7 +2,7 @@ import sqlite3
 import os
 import xml.etree.cElementTree as etree
 import logging
-
+import sys
 schema = {
   'Posts': {
     'Id': 'INTEGER PRIMARY KEY',
@@ -78,6 +78,7 @@ def dump_files(file_names, anathomy,
       del (tree)
 
 if __name__ == '__main__':
-    dump_path= raw_input("Input the directory of the Posts.xml File: ")
-    print dump_path;
-    dump_files(["Posts"], schema, dump_path)
+    #dump_path= raw_input("Input the directory of the Posts.xml File: ")
+    #print dump_path;
+
+    dump_files(["Posts"], schema, sys.argv[1])
